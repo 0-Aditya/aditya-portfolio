@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aditya Shrivastava — Video Editor</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <style>
+        :root {
+            --bg: #030308;
+            --surface: #0a0a16;
+            --surface2: #101022;
+            --text: #f0ece4;
+            --text-muted: #7a778e;
+            --accent: #ff4d1c;
+            --accent2: #8b5cff;
+            --neon-cyan: #00f0ff;
+            --neon-pink: #ff2d78;
+            --neon-purple: #9d4eff;
+            --gaming: #ff2255;
+            --border: #1a1a30;
+            --card-bg: rgba(10, 10, 22, 0.75);
+            --font-main: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-display: 'Clash Display', 'Inter', 'Segoe UI', sans-serif;
+            --ease-smooth: cubic-bezier(0.22, 0.61, 0.36, 1);
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @font-face {
+            font-family: 'Clash Display';
+            src: url('https://cdn.jsdelivr.net/npm/@fontsource/clash-display@5.0.18/files/clash-display-latin-600-normal.woff2') format('woff2');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: #2a1a3a #030308;
+        }
+        body {
+            font-family: var(--font-main);
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            cursor: default;
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030308;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a1a3a;
+            border-radius: 3px;
+        }
+
+        /* ── Custom Cursor ── */
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--neon-cyan);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease-out, border-color 0.3s;
+            mix-blend-mode: difference;
+            transform: translate(-50%, -50%);
+        }
+        .custom-cursor-dot {
+            position: fixed;
+            width: 5px;
+            height: 5px;
+            background: var(--neon-pink);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 12px var(--neon-pink), 0 0 24px var(--neon-pink);
+        }
+        .custom-cursor.hover {
+            transform: translate(-50%, -50%) scale(1.8);
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink);
+            background: rgba(255, 45, 120, 0.1);
+        }
+
+        /* ── Background Layers ── */
+        .bg-video-wrap {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .bg-video-wrap video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.1;
+            filter: saturate(0.2) brightness(0.4) blur(2px) contrast(1.3);
+        }
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse at 20% 10%, rgba(0, 240, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 75% 50%, rgba(255, 45, 120, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 80%, rgba(157, 78, 255, 0.05) 0%, transparent 45%),
+                radial-gradient(ellipse at 85% 15%, rgba(255, 77, 28, 0.04) 0%, transparent 40%);
+        }
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 140px 140px;
+        }
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.04;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.5) 2px,
+                    rgba(0, 0, 0, 0.5) 4px);
+        }
+
+        /* ── Particles ── */
+        .particles {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float linear infinite;
+            opacity: 0;
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(105vh) scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            6% {
+                opacity: 0.7;
+            }
+            75% {
+                opacity: 0.08;
+            }
+            100% {
+                transform: translateY(-8vh) scale(1.5) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* ── Main ── */
+        .main {
+            position: relative;
+            z-index: 3;
+        }
+        section {
+            padding: 80px 5vw;
+            max-width: 1150px;
+            margin: 0 auto;
+        }
+
+        /* ── Admin Trigger ── */
+        .admin-trigger {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: transparent;
+            cursor: default;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        /* ── Admin Overlay ── */
+        .admin-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s var(--ease-smooth);
+        }
+        .admin-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .admin-panel {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 35px 30px;
+            max-width: 620px;
+            width: 92%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 0 60px rgba(157, 78, 255, 0.15), 0 30px 70px rgba(0, 0, 0, 0.7);
+        }
+        .admin-panel h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .admin-panel label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 5px;
+            margin-top: 16px;
+        }
+        .admin-panel input {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .admin-panel input:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+        }
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 11px 22px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            letter-spacing: 0.02em;
+            transition: all 0.3s var(--ease-bounce);
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #ff6b3d;
+            box-shadow: 0 0 30px rgba(255, 77, 28, 0.4);
+            transform: scale(1.04);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        .btn-secondary:hover {
+            border-color: #fff3;
+            color: #fff;
+        }
+        .btn-danger {
+            background: transparent;
+            border: 1px solid #ff336644;
+            color: #ff3366;
+            font-size: 0.8rem;
+            padding: 8px 14px;
+        }
+        .btn-danger:hover {
+            background: #ff336615;
+            border-color: #ff3366;
+        }
+        .admin-video-list {
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .admin-video-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: var(--surface);
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            gap: 10px;
+        }
+        .admin-video-item span {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .password-prompt {
+            text-align: center;
+            padding: 30px;
+        }
+        .password-prompt input {
+            text-align: center;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+        }
+
+        /* ── Hero ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            position: relative;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 45, 120, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: heroGlow 4s ease-in-out infinite;
+        }
+        @keyframes heroGlow {
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
+        }
+        .hero-inner {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-text {
+            flex: 1;
+            min-width: 260px;
+        }
+        .hero-profile {
+            flex-shrink: 0;
+            position: relative;
+        }
+        .profile-img-wrap {
+            width: 220px;
+            height: 220px;
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            background: var(--surface2);
+            border: 2px solid #2a1a3a;
+            transition: all 0.5s var(--ease-smooth);
+            box-shadow: 0 0 40px rgba(157, 78, 255, 0.2), 0 0 80px rgba(255, 45, 120, 0.1);
+        }
+        .profile-img-wrap:hover {
+            box-shadow: 0 0 60px rgba(157, 78, 255, 0.4), 0 0 100px rgba(255, 45, 120, 0.25);
+            transform: scale(1.03);
+        }
+        .profile-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .profile-img-wrap .img-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 55px;
+            color: #2a1a3a;
+        }
+        .profile-ring {
+            position: absolute;
+            inset: -8px;
+            border-radius: 30px;
+            border: 2px solid transparent;
+            background: conic-gradient(from 0deg, var(--neon-pink), var(--neon-cyan), var(--neon-purple), var(--neon-pink)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: ringSpin 6s linear infinite;
+        }
+        @keyframes ringSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .profile-ring::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 34px;
+            border: 2px solid transparent;
+            background: conic-gradient(from 180deg, var(--neon-cyan), var(--neon-pink), var(--neon-purple), var(--neon-cyan)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: ringSpin 4s linear infinite reverse;
+            opacity: 0.6;
+        }
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.8rem, 6.5vw, 5.5rem);
+            font-weight: 600;
+            line-height: 1.02;
+            letter-spacing: -0.03em;
+            margin-bottom: 4px;
+            position: relative;
+            display: inline-block;
+        }
+        .hero h1 .glitch-text {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffffff 0%, #e0b0ff 30%, #ff6b8a 60%, #ffaa5c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+        .hero h1 .glitch-text::before,
+        .hero h1 .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffffff 0%, #e0b0ff 30%, #ff6b8a 60%, #ffaa5c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .hero h1:hover .glitch-text::before {
+            animation: glitchBefore 0.3s ease-in-out;
+            opacity: 0.8;
+            clip-path: inset(20% 0 60% 0);
+        }
+        .hero h1:hover .glitch-text::after {
+            animation: glitchAfter 0.35s ease-in-out 0.05s;
+            opacity: 0.6;
+            clip-path: inset(60% 0 20% 0);
+        }
+        @keyframes glitchBefore {
+            0%,
+            100% {
+                transform: translate(0);
+            }
+            25% {
+                transform: translate(-3px, 2px);
+            }
+            50% {
+                transform: translate(3px, -1px);
+            }
+            75% {
+                transform: translate(-2px, -2px);
+            }
+        }
+        @keyframes glitchAfter {
+            0%,
+            100% {
+                transform: translate(0);
+            }
+            25% {
+                transform: translate(3px, -2px);
+            }
+            50% {
+                transform: translate(-2px, 1px);
+            }
+            75% {
+                transform: translate(2px, 2px);
+            }
+        }
+        .hero .tagline {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            font-style: italic;
+            letter-spacing: 0.03em;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+        .hero .tagline::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 50%;
+            height: 2px;
+            background: var(--neon-cyan);
+            border-radius: 1px;
+            box-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+            animation: linePulse 2s ease-in-out infinite;
+        }
+        @keyframes linePulse {
+            0%,
+            100% {
+                width: 50%;
+                opacity: 0.5;
+            }
+            50% {
+                width: 100%;
+                opacity: 1;
+            }
+        }
+        .hero .badge {
+            display: inline-block;
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            letter-spacing: 0.04em;
+            color: #b0c8d0;
+            margin-top: 16px;
+            backdrop-filter: blur(6px);
+            transition: all 0.4s;
+        }
+        .hero .badge:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            color: #fff;
+        }
+        .hero .badge em {
+            font-style: normal;
+            color: var(--neon-cyan);
+            font-weight: 700;
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+        }
+
+        /* ── Section Titles ── */
+        .sec-title {
+            font-family: var(--font-display);
+            font-size: 2.6rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+        }
+        .sec-title .title-text {
+            background: linear-gradient(135deg, #fff 0%, #d0c0f0 50%, #ff8090 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .sec-title::before {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px;
+            height: 50%;
+            background: var(--neon-pink);
+            border-radius: 3px;
+            box-shadow: 0 0 12px var(--neon-pink), 0 0 24px var(--neon-pink);
+            animation: barPulse 2s ease-in-out infinite;
+        }
+        @keyframes barPulse {
+            0%,
+            100% {
+                box-shadow: 0 0 12px var(--neon-pink), 0 0 24px var(--neon-pink);
+            }
+            50% {
+                box-shadow: 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink), 0 0 60px var(--neon-pink);
+            }
+        }
+
+        /* ── Experience Card ── */
+        .exp-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid #1f1f38;
+            border-radius: 18px;
+            padding: 30px 35px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s var(--ease-smooth);
+        }
+        .exp-card::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            left: -30%;
+            width: 160%;
+            height: 220%;
+            background: radial-gradient(ellipse at 30% 50%, rgba(157, 78, 255, 0.06) 0%, transparent 60%);
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        .exp-card:hover {
+            border-color: #3a2a50;
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(157, 78, 255, 0.08);
+        }
+        .exp-card .company {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        .exp-card .role {
+            color: var(--neon-cyan);
+            font-weight: 500;
+            font-size: 1rem;
+            margin: 4px 0;
+            text-shadow: 0 0 6px rgba(0, 240, 255, 0.3);
+        }
+        .exp-card .duration {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            letter-spacing: 0.03em;
+        }
+
+        /* ── Skills Section ── */
+        .skills-wrapper {
+            position: relative;
+        }
+        .skills-spotlight {
+            text-align: center;
+            margin-bottom: 35px;
+            position: relative;
+        }
+        .skills-spotlight .main-skill {
+            display: inline-block;
+            padding: 16px 40px;
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            background: rgba(255, 34, 85, 0.08);
+            border: 2px solid var(--gaming);
+            border-radius: 60px;
+            color: var(--gaming);
+            text-transform: uppercase;
+            position: relative;
+            text-shadow: 0 0 20px rgba(255, 34, 85, 0.6);
+            box-shadow: 0 0 30px rgba(255, 34, 85, 0.2), 0 0 60px rgba(255, 34, 85, 0.08), inset 0 0 30px rgba(255, 34, 85, 0.04);
+            animation: mainSkillGlow 2.5s ease-in-out infinite;
+        }
+        @keyframes mainSkillGlow {
+            0%,
+            100% {
+                box-shadow: 0 0 30px rgba(255, 34, 85, 0.2), 0 0 60px rgba(255, 34, 85, 0.08);
+                text-shadow: 0 0 20px rgba(255, 34, 85, 0.6);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(255, 34, 85, 0.4), 0 0 100px rgba(255, 34, 85, 0.18), 0 0 140px rgba(255, 34, 85, 0.06);
+                text-shadow: 0 0 35px rgba(255, 34, 85, 0.9), 0 0 60px rgba(255, 34, 85, 0.4);
+            }
+        }
+        .skills-spotlight .main-skill .icon {
+            font-size: 2rem;
+            display: inline-block;
+            animation: iconBounce 0.6s ease-in-out infinite alternate;
+        }
+        @keyframes iconBounce {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-6px);
+            }
+        }
+        .skills-spotlight .spotlight-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        .skills-orbiting {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            max-width: 750px;
+            margin: 0 auto;
+        }
+        .skill-orb {
+            padding: 9px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            border: 1px solid #252540;
+            background: rgba(15, 15, 28, 0.6);
+            color: #b0a8c0;
+            transition: all 0.35s var(--ease-bounce);
+            cursor: default;
+            backdrop-filter: blur(4px);
+            position: relative;
+        }
+        .skill-orb:hover {
+            border-color: #fff4;
+            color: #fff;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            background: rgba(25, 25, 45, 0.8);
+        }
+        .skill-orb::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 52px;
+            border: 1px solid transparent;
+            transition: border-color 0.35s;
+            pointer-events: none;
+        }
+        .skill-orb:hover::after {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ── Video Grid ── */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 22px;
+        }
+        .video-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid #1f1f38;
+            border-radius: 14px;
+            overflow: hidden;
+            transition: all 0.45s var(--ease-smooth);
+            position: relative;
+        }
+        .video-card:hover {
+            border-color: #3a2a50;
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 35px rgba(157, 78, 255, 0.1);
+        }
+        .video-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            border: 2px solid transparent;
+            transition: border-color 0.45s;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .video-card:hover::after {
+            border-color: rgba(0, 240, 255, 0.2);
+        }
+        .video-thumb {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #050510;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .video-thumb iframe,
+        .video-thumb video,
+        .video-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+            transition: transform 0.5s var(--ease-smooth);
+        }
+        .video-card:hover .video-thumb img,
+        .video-card:hover .video-thumb iframe {
+            transform: scale(1.06);
+        }
+        .video-thumb .play-icon {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.45);
+            opacity: 0;
+            transition: opacity 0.35s;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .video-thumb:hover .play-icon {
+            opacity: 1;
+        }
+        .play-icon .circle {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s var(--ease-bounce);
+        }
+        .video-thumb:hover .circle {
+            background: rgba(255, 45, 120, 0.25);
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 25px rgba(255, 45, 120, 0.4);
+            transform: scale(1.1);
+        }
+        .video-info {
+            padding: 15px 18px;
+            position: relative;
+            z-index: 1;
+        }
+        .video-info .v-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #e8e4f0;
+            letter-spacing: 0.01em;
+        }
+        .video-info .v-cat {
+            font-size: 0.72rem;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 3px;
+            text-shadow: 0 0 6px rgba(0, 240, 255, 0.3);
+        }
+        .no-videos-msg {
+            grid-column: 1/-1;
+            text-align: center;
+            color: var(--text-muted);
+            padding: 60px;
+            font-style: italic;
+            border: 2px dashed #1f1f38;
+            border-radius: 16px;
+            background: rgba(10, 10, 22, 0.4);
+            transition: all 0.4s;
+        }
+        .no-videos-msg:hover {
+            border-color: #3a2a50;
+            color: #b0a8c0;
+        }
+
+        /* ── Resume ── */
+        .resume-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .resume-link {
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--accent);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.04em;
+            transition: all 0.3s var(--ease-bounce);
+            display: inline-block;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+        .resume-link::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-cyan));
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: 12px;
+        }
+        .resume-link:hover::before {
+            opacity: 1;
+        }
+        .resume-link:hover {
+            transform: scale(1.06);
+            box-shadow: 0 12px 35px rgba(255, 45, 120, 0.35), 0 0 50px rgba(0, 240, 255, 0.15);
+        }
+        .resume-link span {
+            position: relative;
+            z-index: 1;
+        }
+        .resume-link.empty {
+            background: transparent;
+            border: 2px dashed #1f1f38;
+            color: var(--text-muted);
+            cursor: not-allowed;
+            pointer-events: none;
+            text-transform: none;
+        }
+
+        /* ── Contact ── */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+        .contact-item {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid #1f1f38;
+            border-radius: 14px;
+            padding: 20px 22px;
+            transition: all 0.35s var(--ease-smooth);
+            text-decoration: none;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+        .contact-item:hover {
+            border-color: #3a2a50;
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(157, 78, 255, 0.06);
+        }
+        .contact-item .c-icon {
+            font-size: 1.7rem;
+            flex-shrink: 0;
+            transition: transform 0.3s var(--ease-bounce);
+        }
+        .contact-item:hover .c-icon {
+            transform: scale(1.2);
+        }
+        .contact-item .c-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .contact-item .c-value {
+            font-weight: 500;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 35px 5vw;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            letter-spacing: 0.04em;
+            border-top: 1px solid #1a1a30;
+            margin-top: 30px;
+        }
+
+        /* ── Reveal ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(35px);
+            transition: opacity 0.85s var(--ease-out-expo), transform 0.85s var(--ease-out-expo);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Glitch Section Divider ── */
+        .glitch-divider {
+            text-align: center;
+            padding: 20px 0;
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            letter-spacing: 0.2em;
+            color: #1f1f38;
+            user-select: none;
+            pointer-events: none;
+            position: relative;
+        }
+        .glitch-divider::before,
+        .glitch-divider::after {
+            content: '◆ ◆ ◆';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+        }
+        .glitch-divider:hover::before {
+            animation: dividerGlitch 0.4s ease-in-out;
+            opacity: 0.7;
+            clip-path: inset(30% 0 50% 0);
+        }
+        .glitch-divider:hover::after {
+            animation: dividerGlitch 0.45s ease-in-out 0.06s;
+            opacity: 0.5;
+            clip-path: inset(50% 0 30% 0);
+        }
+        @keyframes dividerGlitch {
+            0%,
+            100% {
+                transform: translate(-50%, -50%);
+            }
+            30% {
+                transform: translate(-48%, -52%);
+            }
+            60% {
+                transform: translate(-52%, -48%);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-inner {
+                flex-direction: column-reverse;
+                text-align: center;
+                align-items: center;
+            }
+            .hero h1 {
+                font-size: 2.4rem;
+            }
+            .profile-img-wrap {
+                width: 150px;
+                height: 150px;
+                border-radius: 18px;
+            }
+            .profile-ring {
+                border-radius: 24px;
+                inset: -6px;
+            }
+            section {
+                padding: 55px 4vw;
+            }
+            .sec-title {
+                font-size: 2rem;
+            }
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            .skills-spotlight .main-skill {
+                font-size: 1.3rem;
+                padding: 14px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="customCursor"></div>
+    <div class="custom-cursor-dot" id="customCursorDot"></div>
+
+    <!-- Background Video -->
+    <div class="bg-video-wrap">
+        <video autoplay muted loop playsinline>
+            <source src="https://cdn.coverr.co/videos/coverr-abstract-fluid-art-4921/1080p.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="bg-gradient"></div>
+    <div class="noise"></div>
+    <div class="scanlines"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- Hidden Admin Trigger -->
+    <div class="admin-trigger" id="adminTrigger"></div>
+
+    <!-- Admin Overlay -->
+    <div class="admin-overlay" id="adminOverlay">
+        <div class="admin-panel" id="adminPanel"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+
+        <!-- HERO -->
+        <section class="hero reveal">
+            <div class="hero-inner">
+                <div class="hero-text">
+                    <h1>
+                        <span class="glitch-text" data-text="Aditya">Aditya</span><br>
+                        <span class="glitch-text" data-text="Shrivastava">Shrivastava</span>
+                    </h1>
+                    <p class="tagline">experimentation is my super power</p>
+                    <div class="badge">🎬 Video Editor · <em>DaVinci Resolve</em></div>
+                </div>
+                <div class="hero-profile">
+                    <div class="profile-ring"></div>
+                    <div class="profile-img-wrap" id="profileWrap">
+                        <img src="images/profile.jpg" alt="Aditya Shrivastava" id="profileImg"
+                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="img-placeholder" style="display:none;">📷</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="glitch-divider">◆ ◆ ◆</div>
+
+        <!-- EXPERIENCE -->
+        <section class="reveal">
+            <h2 class="sec-title"><span class="title-text">Experience</span></h2>
+            <div class="exp-card" id="expContainer">
+                <div class="company">DeepThought CultureTech Ventures</div>
+                <div class="role">Video Editor — Internship</div>
+                <div class="duration">📅 February 2025 — July 2025 · 6 months</div>
+            </div>
+        </section>
+
+        <div class="glitch-divider">◆ ◆ ◆</div>
+
+        <!-- SKILLS -->
+        <section class="reveal">
+            <h2 class="sec-title"><span class="title-text">What I Edit</span></h2>
+            <div class="skills-wrapper">
+                <div class="skills-spotlight">
+                    <div class="main-skill">
+                        <span class="icon">🎮</span> GAMING EDITS
+                    </div>
+                    <span class="spotlight-label">← My Speciality →</span>
+                </div>
+                <div class="skills-orbiting">
+                    <span class="skill-orb">🏢 Corporate Edits</span>
+                    <span class="skill-orb">🎙️ Talking Head Videos</span>
+                    <span class="skill-orb">📱 Social Media Reels</span>
+                    <span class="skill-orb">🎞️ Montages</span>
+                    <span class="skill-orb">🎬 Cinematic Edits</span>
+                    <span class="skill-orb">📺 YouTube Content</span>
+                    <span class="skill-orb">🎵 Music Videos</span>
+                    <span class="skill-orb">🔥 Transitions & FX</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="glitch-divider">◆ ◆ ◆</div>
+
+        <!-- PORTFOLIO -->
+        <section class="reveal">
+            <h2 class="sec-title"><span class="title-text">My Work</span></h2>
+            <div class="video-grid" id="videoGrid">
+                <div class="no-videos-msg" id="noVideosMsg">
+                    🎥 No videos added yet.<br><small style="color:#555;">Aditya will showcase his work here soon.</small>
+                </div>
+            </div>
+        </section>
+
+        <div class="glitch-divider">◆ ◆ ◆</div>
+
+        <!-- RESUME -->
+        <section class="reveal">
+            <h2 class="sec-title"><span class="title-text">Resume</span></h2>
+            <div class="resume-area">
+                <a href="#" class="resume-link empty" id="resumeBtn" target="_blank" rel="noopener">
+                    <span>📄 Download Resume</span>
+                </a>
+                <span style="color:var(--text-muted);font-size:0.8rem;">Google Drive link</span>
+            </div>
+        </section>
+
+        <div class="glitch-divider">◆ ◆ ◆</div>
+
+        <!-- CONTACT -->
+        <section class="reveal">
+            <h2 class="sec-title"><span class="title-text">Contact</span></h2>
+            <div class="contact-grid">
+                <a href="mailto:adityaannu206.shrivastava@gmail.com" class="contact-item">
+                    <span class="c-icon">📧</span>
+                    <div><div class="c-label">Email</div><div class="c-value">adityaannu206.shrivastava@gmail.com</div></div>
+                </a>
+                <a href="https://www.linkedin.com/in/aditya-shrivastava-40a915330/" target="_blank" rel="noopener" class="contact-item">
+                    <span class="c-icon">💼</span>
+                    <div><div class="c-label">LinkedIn</div><div class="c-value">Aditya Shrivastava</div></div>
+                </a>
+                <a href="https://www.instagram.com/drowsy_dahivada/" target="_blank" rel="noopener" class="contact-item">
+                    <span class="c-icon">📸</span>
+                    <div><div class="c-label">Instagram</div><div class="c-value">@drowsy_dahivada</div></div>
+                </a>
+                <a href="https://wa.me/917898323708" target="_blank" rel="noopener" class="contact-item">
+                    <span class="c-icon">💬</span>
+                    <div><div class="c-label">WhatsApp / Phone</div><div class="c-value">+91 7898323708</div></div>
+                </a>
+            </div>
+        </section>
+
+        <footer class="reveal">
+            © 2026 Aditya Shrivastava · Built with 🔥 for video editing
+        </footer>
+    </div>
+
+    <script>
+        // ── CONFIG ──
+        const ADMIN_PASSWORD = 'aditya2026';
+        const ADMIN_SHORTCUT = { ctrl: true, shift: true, key: 'A' };
+
+        // ── STATE ──
+        let isAdmin = false;
+        let videos = [];
+        let resumeLink = '';
+        let profilePhotoData = null;
+
+        // ── DOM refs ──
+        const adminTrigger = document.getElementById('adminTrigger');
+        const adminOverlay = document.getElementById('adminOverlay');
+        const adminPanel = document.getElementById('adminPanel');
+        const videoGrid = document.getElementById('videoGrid');
+        const noVideosMsg = document.getElementById('noVideosMsg');
+        const resumeBtn = document.getElementById('resumeBtn');
+        const profileImg = document.getElementById('profileImg');
+        const profileWrap = document.getElementById('profileWrap');
+        const customCursor = document.getElementById('customCursor');
+        const customCursorDot = document.getElementById('customCursorDot');
+
+        // ── Custom Cursor ──
+        document.addEventListener('mousemove', (e) => {
+            customCursor.style.left = e.clientX + 'px';
+            customCursor.style.top = e.clientY + 'px';
+            customCursorDot.style.left = e.clientX + 'px';
+            customCursorDot.style.top = e.clientY + 'px';
+        });
+        document.addEventListener('mouseover', (e) => {
+            const hoverEl = e.target.closest(
+                'a, button, .video-thumb, .profile-img-wrap, .skill-orb, .contact-item, .exp-card, .video-card, .resume-link, .badge'
+                );
+            if (hoverEl) {
+                customCursor.classList.add('hover');
+            }
+        });
+        document.addEventListener('mouseout', (e) => {
+            const hoverEl = e.target.closest(
+                'a, button, .video-thumb, .profile-img-wrap, .skill-orb, .contact-item, .exp-card, .video-card, .resume-link, .badge'
+                );
+            if (!hoverEl || !e.relatedTarget || !e.relatedTarget.closest(
+                    'a, button, .video-thumb, .profile-img-wrap, .skill-orb, .contact-item, .exp-card, .video-card, .resume-link, .badge'
+                    )) {
+                customCursor.classList.remove('hover');
+            }
+        });
+        // Hide default cursor
+        document.body.style.cursor = 'none';
+        document.querySelectorAll('a, button, .video-thumb, .profile-img-wrap, .skill-orb, .contact-item, .exp-card, .video-card, .resume-link, .badge')
+            .forEach(el => el.style.cursor = 'none');
+
+        // ── Load from localStorage ──
+        function loadState() {
+            try {
+                const saved = JSON.parse(localStorage.getItem('aditya_portfolio_data'));
+                if (saved) {
+                    videos = saved.videos || [];
+                    resumeLink = saved.resumeLink || '';
+                    profilePhotoData = saved.profilePhotoData || null;
+                }
+            } catch (e) {
+                videos = [];
+                resumeLink = '';
+                profilePhotoData = null;
+            }
+        }
+
+        function saveState() {
+            const data = { videos, resumeLink, profilePhotoData };
+            localStorage.setItem('aditya_portfolio_data', JSON.stringify(data));
+        }
+
+        function applyState() {
+            if (profilePhotoData && profileImg) {
+                profileImg.src = profilePhotoData;
+                profileImg.style.display = 'block';
+                const placeholder = profileWrap.querySelector('.img-placeholder');
+                if (placeholder) placeholder.style.display = 'none';
+            }
+            if (resumeLink) {
+                resumeBtn.href = resumeLink;
+                resumeBtn.classList.remove('empty');
+                resumeBtn.style.pointerEvents = 'auto';
+                resumeBtn.style.cursor = 'none';
+            }
+            renderVideos();
+        }
+
+        // ── Render Videos ──
+        function renderVideos() {
+            const existingCards = videoGrid.querySelectorAll('.video-card');
+            existingCards.forEach(c => c.remove());
+
+            if (videos.length === 0) {
+                noVideosMsg.style.display = 'block';
+                return;
+            }
+            noVideosMsg.style.display = 'none';
+
+            videos.forEach((v) => {
+                const card = document.createElement('div');
+                card.classList.add('video-card');
+                let thumbHTML = '';
+                const url = v.url || '';
+                const thumb = v.thumbnail || '';
+                const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
+                const isVimeo = url.includes('vimeo.com');
+
+                if (isYouTube) {
+                    const ytId = extractYouTubeID(url);
+                    if (ytId) {
+                        thumbHTML = `
+                            <iframe src="https://www.youtube.com/embed/${ytId}?autoplay=0&mute=1&controls=0&modestbranding=1&rel=0"
+                                loading="lazy" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen style="pointer-events:none;">
+                            </iframe>
+                            <div class="play-icon"><div class="circle">▶</div></div>`;
+                    }
+                } else if (isVimeo) {
+                    const vimeoId = extractVimeoID(url);
+                    if (vimeoId) {
+                        thumbHTML = `
+                            <iframe src="https://player.vimeo.com/video/${vimeoId}?autoplay=0&muted=1&controls=0&title=0&byline=0"
+                                loading="lazy" allow="autoplay; fullscreen; picture-in-picture" style="pointer-events:none;">
+                            </iframe>
+                            <div class="play-icon"><div class="circle">▶</div></div>`;
+                    }
+                }
+
+                if (!thumbHTML) {
+                    const imgSrc = thumb ||
+                        'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22180%22%3E%3Crect fill=%22%230a0a16%22 width=%22320%22 height=%22180%22 rx=%228%22/%3E%3Ctext fill=%22%233a2a50%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.35em%22 font-size=%2216%22%3E🎬%3C/text%3E%3C/svg%3E';
+                    thumbHTML = `
+                        <img src="${imgSrc}" alt="${escapeHTML(v.title || 'Video')}" loading="lazy"
+                            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22180%22%3E%3Crect fill=%22%230a0a16%22 width=%22320%22 height=%22180%22/%3E%3Ctext fill=%22%233a2a50%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.35em%22%3E🎬%3C/text%3E%3C/svg%3E';">
+                        <div class="play-icon"><div class="circle">▶</div></div>`;
+                }
+
+                card.innerHTML = `
+                    <div class="video-thumb" data-url="${escapeHTML(url)}">
+                        ${thumbHTML}
+                    </div>
+                    <div class="video-info">
+                        <div class="v-title">${escapeHTML(v.title || 'Untitled')}</div>
+                        <div class="v-cat">${escapeHTML(v.category || 'General')}</div>
+                    </div>
+                `;
+                card.querySelector('.video-thumb').addEventListener('click', () => {
+                    window.open(url, '_blank');
+                });
+                videoGrid.appendChild(card);
+            });
+        }
+
+        function extractYouTubeID(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        function extractVimeoID(url) {
+            const regExp = /vimeo\.com\/(\d+)/;
+            const match = url.match(regExp);
+            return match ? match[1] : null;
+        }
+
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ── Admin Panel ──
+        function renderAdminPanel() {
+            if (!isAdmin) {
+                adminPanel.innerHTML = `
+                    <div class="password-prompt">
+                        <h3>🔒 Admin Access</h3>
+                        <label>Enter Password</label>
+                        <input type="password" id="adminPasswordInput" placeholder="Password">
+                        <div class="btn-row" style="justify-content:center;">
+                            <button class="btn btn-primary" id="adminLoginBtn">Unlock</button>
+                            <button class="btn btn-secondary" id="adminCloseBtn">Close</button>
+                        </div>
+                    </div>`;
+                document.getElementById('adminLoginBtn').addEventListener('click', () => {
+                    const pw = document.getElementById('adminPasswordInput').value;
+                    if (pw === ADMIN_PASSWORD) {
+                        isAdmin = true;
+                        renderAdminPanel();
+                    } else {
+                        alert('Wrong password!');
+                    }
+                });
+                document.getElementById('adminCloseBtn').addEventListener('click', closeAdmin);
+                document.getElementById('adminPasswordInput').addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') document.getElementById('adminLoginBtn').click();
+                });
+                return;
+            }
+
+            const videoListHTML = videos.map((v, i) => `
+                <div class="admin-video-item">
+                    <span>${escapeHTML(v.title || 'Untitled')} — ${escapeHTML(v.category || 'General')}</span>
+                    <button class="btn btn-danger btn-sm" data-remove-video="${i}">✕</button>
+                </div>
+            `).join('') || '<div style="color:var(--text-muted);font-size:0.82rem;">No videos yet.</div>';
+
+            adminPanel.innerHTML = `
+                <h3>🛠 Admin Panel</h3>
+                <p style="color:var(--text-muted);font-size:0.78rem;margin-bottom:15px;">
+                    Changes save to your browser. For permanent cross-device persistence, hardcode videos in the script.
+                </p>
+                <label>Profile Photo</label>
+                <input type="file" id="adminProfileUpload" accept="image/*">
+                <small style="color:var(--text-muted);">Or place <code>images/profile.jpg</code> in repo.</small>
+                <label>Resume Link (Google Drive)</label>
+                <input type="url" id="adminResumeInput" value="${escapeHTML(resumeLink)}" placeholder="https://drive.google.com/...">
+                <label style="margin-top:18px;">Add Video</label>
+                <input type="url" id="adminVideoURL" placeholder="Video URL (YouTube, Vimeo, direct MP4)">
+                <input type="text" id="adminVideoTitle" placeholder="Video Title" style="margin-top:6px;">
+                <input type="text" id="adminVideoCategory" placeholder="Category (e.g., Gaming, Corporate)" style="margin-top:6px;">
+                <input type="url" id="adminVideoThumb" placeholder="Custom Thumbnail URL (optional)" style="margin-top:6px;">
+                <button class="btn btn-primary" id="adminAddVideoBtn" style="margin-top:10px;">+ Add Video</button>
+                <label style="margin-top:18px;">Video List (${videos.length})</label>
+                <div class="admin-video-list">${videoListHTML}</div>
+                <div class="btn-row">
+                    <button class="btn btn-secondary" id="adminCloseBtn">Close Panel</button>
+                    <button class="btn btn-danger" id="adminClearVideosBtn">Clear All</button>
+                    <button class="btn btn-secondary" id="adminLogoutBtn">Logout</button>
+                </div>
+            `;
+
+            document.getElementById('adminProfileUpload').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        profilePhotoData = ev.target.result;
+                        profileImg.src = profilePhotoData;
+                        profileImg.style.display = 'block';
+                        const placeholder = profileWrap.querySelector('.img-placeholder');
+                        if (placeholder) placeholder.style.display = 'none';
+                        saveState();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            document.getElementById('adminResumeInput').addEventListener('input', (e) => {
+                resumeLink = e.target.value.trim();
+                if (resumeLink) {
+                    resumeBtn.href = resumeLink;
+                    resumeBtn.classList.remove('empty');
+                    resumeBtn.style.pointerEvents = 'auto';
+                    resumeBtn.style.cursor = 'none';
+                } else {
+                    resumeBtn.href = '#';
+                    resumeBtn.classList.add('empty');
+                    resumeBtn.style.pointerEvents = 'none';
+                }
+                saveState();
+            });
+            document.getElementById('adminAddVideoBtn').addEventListener('click', () => {
+                const url = document.getElementById('adminVideoURL').value.trim();
+                const title = document.getElementById('adminVideoTitle').value.trim();
+                const category = document.getElementById('adminVideoCategory').value.trim();
+                const thumbnail = document.getElementById('adminVideoThumb').value.trim();
+                if (!url || !title) return alert('Please enter URL and title.');
+                videos.push({ url, title, category: category || 'General', thumbnail });
+                saveState();
+                renderVideos();
+                renderAdminPanel();
+            });
+            document.getElementById('adminCloseBtn').addEventListener('click', closeAdmin);
+            document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+                isAdmin = false;
+                renderAdminPanel();
+            });
+            document.getElementById('adminClearVideosBtn').addEventListener('click', () => {
+                if (confirm('Remove ALL videos?')) { videos = [];
+                    saveState();
+                    renderVideos();
+                    renderAdminPanel(); }
+            });
+            adminPanel.querySelectorAll('[data-remove-video]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.getAttribute('data-remove-video'));
+                    videos.splice(idx, 1);
+                    saveState();
+                    renderVideos();
+                    renderAdminPanel();
+                });
+            });
+        }
+
+        function openAdmin() { adminOverlay.classList.add('active');
+            renderAdminPanel(); }
+
+        function closeAdmin() { adminOverlay.classList.remove('active'); }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === ADMIN_SHORTCUT.key) { e.preventDefault();
+                openAdmin(); }
+            if (e.key === 'Escape') closeAdmin();
+        });
+        adminTrigger.addEventListener('click', (e) => { if (e.detail === 3) openAdmin(); });
+        adminOverlay.addEventListener('click', (e) => { if (e.target === adminOverlay) closeAdmin(); });
+
+        // ── Particles ──
+        const particlesContainer = document.getElementById('particles');
+        const colors = ['#ff2d78', '#00f0ff', '#9d4eff', '#ffffff', '#ff4d1c', '#ffaa5c'];
+        for (let i = 0; i < 45; i++) {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            const size = Math.random() * 3 + 1;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            p.style.animationDuration = (Math.random() * 13 + 8) + 's';
+            p.style.animationDelay = (Math.random() * 13) + 's';
+            p.style.boxShadow = `0 0 ${size*4}px ${p.style.backgroundColor}`;
+            particlesContainer.appendChild(p);
+        }
+
+        // ── Scroll Reveal ──
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add(
+            'visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -25px 0px' });
+        reveals.forEach(el => observer.observe(el));
+
+        // ── Parallax Background ──
+        const bgWrap = document.querySelector('.bg-video-wrap');
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 7;
+            const y = (e.clientY / window.innerHeight - 0.5) * 7;
+            bgWrap.style.transform = `translate(${x}px, ${y}px) scale(1.07)`;
+            bgWrap.style.transition = 'transform 1.5s cubic-bezier(0.22, 0.61, 0.36, 1)';
+        });
+
+        // ── Init ──
+        loadState();
+        applyState();
+
+        console.log('%c🔥 ADITYA SHRIVASTAVA — PORTFOLIO LIVE',
+            'color:#ff2d78;font-size:1.3em;font-weight:bold;text-shadow:0 0 10px #ff2d78;');
+        console.log('%c🔑 Admin: %cCtrl+Shift+A %c| PW: %caditya2026',
+            'color:#fff;', 'color:#00f0ff;', 'color:#fff;', 'color:#ff2d78;');
+        console.log('%c📁 Photo: %cimages/profile.jpg %c| %c💾 Save videos via admin panel',
+            'color:#fff;', 'color:#9d4eff;', 'color:#fff;', 'color:#888;');
+    </script>
+</body>
+</html>
