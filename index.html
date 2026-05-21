@@ -1370,15 +1370,34 @@
 
         // ── STATE ──
         function loadState() {
-            try {
-                const s = JSON.parse(localStorage.getItem('aditya_comic_v5'));
-                if (s) { videos = s.videos || [];
-                    resumeLink = s.resumeLink || '';
-                    profilePhotoData = s.profilePhotoData || null; }
-            } catch (e) { videos = [];
-                resumeLink = '';
-                profilePhotoData = null; }
-        }
+    try {
+        const s = JSON.parse(localStorage.getItem('aditya_comic_v5'));
+        if (s) { videos = s.videos || [];
+            resumeLink = s.resumeLink || '';
+            profilePhotoData = s.profilePhotoData || null; }
+    } catch (e) { videos = [];
+        resumeLink = '';
+        profilePhotoData = null; }
+    
+    // 👇 YOUR PERMANENT VIDEOS — All visitors see these
+    if (videos.length === 0) {
+        videos = [
+            {
+                url: 'https://drive.google.com/file/d/1X0cui2U6wdF7a6_ZZ1Xx-5UlO6GAnkpE/view?usp=drive_link',
+                title: 'Record of ragnarok edit',
+                category: '',
+                thumbnail: ''
+            },
+            {
+                url: 'https://drive.google.com/file/d/1MH9knway_YsIJA2hPy4mGYgfrQ8pbINe/view?usp=drive_link',
+                title: 'Elden ring edit',
+                category: 'gaming',
+                thumbnail: ''
+            }
+        ];
+        saveState();
+    }
+}
 
         function saveState() { localStorage.setItem('aditya_comic_v5', JSON.stringify({ videos, resumeLink,
                 profilePhotoData })); }
