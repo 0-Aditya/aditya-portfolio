@@ -456,7 +456,6 @@
             border: 2px solid var(--ink);
         }
 
-        /* ── PROJECTS WITH SCROLL ── */
         .projects-mini-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1086,13 +1085,13 @@
         const musicLabel = document.getElementById('musicLabel');
 
         // ═══════════════════════════════════
-        // 📌 YOUR PERMANENT VIDEOS — Replace URLs
+        // 📌 YOUR PERMANENT VIDEOS
+        // Supports: YouTube, Vimeo, Google Drive, direct MP4
         // ═══════════════════════════════════
         const DEFAULT_VIDEOS = [
-            { url: 'https://drive.google.com/file/d/1xjHpimWsdIcZ_lTZiGYNQJsYPY1dUYCj/view?usp=drive_link', title: 'Corporate edit', category: 'Corporate', thumbnail: 'thumbnails/corporate-thumbnail.png' },
-            { url: 'https://drive.google.com/file/d/1MH9knway_YsIJA2hPy4mGYgfrQ8pbINe/view?usp=drive_link', title: 'Gaming edit', category: 'Gaming', thumbnail: 'thumbnails/gaming-thumbnail.png' },
-            { url: 'https://drive.google.com/file/d/1PBJUFiwQS5bor9ULWPluBkUNk5ajM6Or/view?usp=drive_link', title: 'Talking head edit', category: 'Talking head', thumbnail: 'thumbnails/talking-head-thumbnail.png' },
-            { url: 'https://drive.google.com/file/d/1X0cui2U6wdF7a6_ZZ1Xx-5UlO6GAnkpE/view?usp=drive_link', title: 'Anime edit', category: 'Cinema', thumbnail: 'thumbnails/anime-thumbnail.png' }
+            { url: 'https://drive.google.com/file/d/YOUR_ID_1/view', title: 'GAMING MONTAGE', category: 'GAMING', thumbnail: 'thumbnails/gaming.png' },
+            { url: 'https://youtu.be/YOUR_ID_2', title: 'CORPORATE REEL', category: 'CORPORATE', thumbnail: 'thumbnails/corporate.png' },
+            { url: 'https://vimeo.com/YOUR_ID_3', title: 'TALKING HEAD', category: 'TALKING HEAD', thumbnail: 'thumbnails/talking-head.png' }
         ];
 
         bgMusic.volume = 0.5;
@@ -1135,14 +1134,14 @@
         animCursors();
 
         function loadState() {
-            try { const s = JSON.parse(localStorage.getItem('aditya_comic_v8')); if (s && s.videos && s.videos.length >
+            try { const s = JSON.parse(localStorage.getItem('aditya_comic_v9')); if (s && s.videos && s.videos.length >
                     0) { videos = s.videos;
                     resumeLink = s.resumeLink || resumeLink;
                     profilePhotoData = s.profilePhotoData || null; } else { videos = [...DEFAULT_VIDEOS]; } } catch (e) { videos =
                     [...DEFAULT_VIDEOS]; }
             if (!Array.isArray(videos)) videos = [...DEFAULT_VIDEOS];
         }
-        function saveState() { localStorage.setItem('aditya_comic_v8', JSON.stringify({ videos, resumeLink,
+        function saveState() { localStorage.setItem('aditya_comic_v9', JSON.stringify({ videos, resumeLink,
                 profilePhotoData })); }
         function applyState() {
             if (profilePhotoData && profileImg) { profileImg.src = profilePhotoData;
@@ -1152,6 +1151,8 @@
                 resumeBtn.style.pointerEvents = 'auto'; }
             renderProjects();
         }
+
+        // ── FIXED RENDER WITH GOOGLE DRIVE SUPPORT ──
         function renderProjects() {
             const ex = projectsGrid.querySelectorAll('.project-card');
             ex.forEach(c => c.remove());
@@ -1161,25 +1162,54 @@
                 const url = v.url || '';
                 const title = v.title || 'Untitled';
                 const category = v.category || 'GENERAL';
+                const hasCustomThumb = v.thumbnail && v.thumbnail.trim() !== '';
                 const isYT = url.includes('youtube.com') || url.includes('youtu.be');
                 const isVim = url.includes('vimeo.com');
+                const isDrive = url.includes('drive.google.com');
                 let media = '';
-                if (isYT) { const id = (url.match(/(?:youtu\.be\/|v\/|embed\/|watch\?v=|\&v=)([^#\&\?]*)/) || [])[
-                        1]; if (id) media =
-                        `<iframe src="https://www.youtube.com/embed/${id}?autoplay=0&mute=1&controls=0&modestbranding=1&rel=0" loading="lazy" allowfullscreen style="pointer-events:none;width:100%;height:100%;border:none;"></iframe>`; } else if (
-                    isVim) { const id = (url.match(/vimeo\.com\/(\d+)/) || [])[1]; if (id) media =
-                        `<iframe src="https://player.vimeo.com/video/${id}?autoplay=0&muted=1&controls=0&title=0&byline=0" loading="lazy" allowfullscreen style="pointer-events:none;width:100%;height:100%;border:none;"></iframe>`; }
-                if (!media) { const cols = ['#e63946', '#1d3557', '#ffd60a', '#f72585', '#00b4d8', '#e76f51'];
-                    media =
-                    `<div style="width:100%;height:100%;background:${cols[i%cols.length]};display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:0.9rem;color:#fff;text-align:center;padding:8px;">${esc(title)}</div>`; }
+                let embedUrl = url;
+
+                // Convert Google Drive links to embeddable format
+                if (isDrive) {
+                    const driveMatch = url.match(/\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
+                    if (driveMatch && driveMatch[1]) {
+                        embedUrl = 'https://drive.google.com/file/d/' + driveMatch[1] + '/preview';
+                    }
+                }
+
+                // PRIORITY 1: Custom thumbnail
+                if (hasCustomThumb) {
+                    media = `<img src="${esc(v.thumbnail)}" alt="${esc(title)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;position:relative;z-index:1;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">`;
+                    const cols = ['#e63946', '#1d3557', '#ffd60a', '#f72585', '#00b4d8', '#e76f51'];
+                    media += `<div style="display:none;width:100%;height:100%;background:${cols[i%cols.length]};align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:0.9rem;color:#fff;text-align:center;padding:8px;position:absolute;top:0;left:0;z-index:0;">${esc(title)}</div>`;
+                }
+                // PRIORITY 2: YouTube embed
+                else if (isYT) {
+                    const id = (url.match(/(?:youtu\.be\/|v\/|embed\/|watch\?v=|\&v=)([^#\&\?]*)/) || [])[1];
+                    if (id) media = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=0&mute=1&controls=0&modestbranding=1&rel=0" loading="lazy" allowfullscreen style="pointer-events:none;width:100%;height:100%;border:none;"></iframe>`;
+                }
+                // PRIORITY 3: Vimeo embed
+                else if (isVim) {
+                    const id = (url.match(/vimeo\.com\/(\d+)/) || [])[1];
+                    if (id) media = `<iframe src="https://player.vimeo.com/video/${id}?autoplay=0&muted=1&controls=0&title=0&byline=0" loading="lazy" allowfullscreen style="pointer-events:none;width:100%;height:100%;border:none;"></iframe>`;
+                }
+                // PRIORITY 4: Google Drive embed
+                else if (isDrive) {
+                    media = `<iframe src="${embedUrl}" loading="lazy" allowfullscreen style="pointer-events:none;width:100%;height:100%;border:none;"></iframe>`;
+                }
+                // PRIORITY 5: Direct video/fallback
+                if (!media) {
+                    const cols = ['#e63946', '#1d3557', '#ffd60a', '#f72585', '#00b4d8', '#e76f51'];
+                    media = `<div style="width:100%;height:100%;background:${cols[i%cols.length]};display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:0.9rem;color:#fff;text-align:center;padding:8px;">${esc(title)}</div>`;
+                }
+
                 const card = document.createElement('div');
                 card.classList.add('project-card');
                 card.innerHTML = `
                     <div class="card-media">${media}</div>
                     <div class="card-overlay"><div class="card-cat">${esc(category)}</div><div class="card-title">${esc(title)}</div></div>
                     <div class="pow-badge">▶ PLAY</div>`;
-                card.querySelector('.card-media').addEventListener('click', () => window.open(url,
-                '_blank'));
+                card.querySelector('.card-media').addEventListener('click', () => window.open(embedUrl, '_blank'));
                 projectsGrid.appendChild(card);
             });
         }
@@ -1206,7 +1236,7 @@
                 <label>PROFILE PHOTO</label><input type="file" id="adminProfileUpload" accept="image/*">
                 <label>RESUME LINK</label><input type="url" id="adminResume" value="${esc(resumeLink)}">
                 <label>ADD VIDEO</label>
-                <input type="url" id="adminURL" placeholder="VIDEO URL"><input type="text" id="adminTitle" placeholder="TITLE"><input type="text" id="adminCat" placeholder="CATEGORY">
+                <input type="url" id="adminURL" placeholder="VIDEO URL (YouTube/Vimeo/Drive)"><input type="text" id="adminTitle" placeholder="TITLE"><input type="text" id="adminCat" placeholder="CATEGORY"><input type="url" id="adminThumb" placeholder="THUMBNAIL PATH (optional)">
                 <button class="admin-btn primary" id="adminAddBtn">+ ADD</button>
                 <label>VIDEOS (${videos.length})</label><div class="admin-video-list">${list}</div>
                 <div class="admin-btn-row"><button class="admin-btn" id="adminCloseBtn">CLOSE</button><button class="admin-btn" id="adminClearBtn" style="color:#e00;">CLEAR ALL</button><button class="admin-btn" id="adminLogoutBtn">LOGOUT</button></div>`;
@@ -1224,9 +1254,9 @@
                 saveState(); });
             document.getElementById('adminAddBtn').addEventListener('click', () => { const u = document
                     .getElementById('adminURL').value.trim(); const t = document.getElementById('adminTitle')
-                    .value.trim(); const c = document.getElementById('adminCat').value.trim(); if (!u || !t)
-                    return alert('URL + TITLE REQUIRED');
-                videos.push({ url: u, title: t, category: c || 'GENERAL', thumbnail: '' });
+                    .value.trim(); const c = document.getElementById('adminCat').value.trim(); const th = document
+                    .getElementById('adminThumb').value.trim(); if (!u || !t) return alert('URL + TITLE REQUIRED');
+                videos.push({ url: u, title: t, category: c || 'GENERAL', thumbnail: th });
                 saveState();
                 renderProjects();
                 renderAdminPanel(); });
@@ -1260,7 +1290,7 @@
         applyState();
         setTimeout(() => { const intro = document.querySelector('.intro-cutscene'); if (intro) intro.style.display =
                 'none'; }, 2500);
-        console.log('%c💥 COMIC v3 %c@120FPS %c🎵', 'color:#e63946;font-size:1.1em;', '', 'color:#ffd60a;');
+        console.log('%c💥 COMIC v9 %c@120FPS %c🎵', 'color:#e63946;font-size:1.1em;', '', 'color:#ffd60a;');
     </script>
 </body>
 </html>
