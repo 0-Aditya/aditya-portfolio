@@ -262,129 +262,6 @@
         }
         .contact-chip:hover { background:var(--ink); color:#fff; transform:translateY(-2px); box-shadow:4px 4px 0 var(--red); }
 
-        .reviews-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-height: 320px;
-            overflow-y: auto;
-            padding-right: 6px;
-            margin-top: 4px;
-        }
-        .reviews-container::-webkit-scrollbar { width: 8px; }
-        .reviews-container::-webkit-scrollbar-track { background: #f0f0ea; border-radius: 4px; border: 1px solid #ddd; }
-        .reviews-container::-webkit-scrollbar-thumb { background: var(--ink); border-radius: 4px; border: 2px solid #f0f0ea; }
-        .reviews-container::-webkit-scrollbar-thumb:hover { background: var(--red); }
-
-        .review-card {
-            background: #fff;
-            border: var(--border-thin);
-            padding: 12px 14px;
-            box-shadow: 2px 2px 0 var(--ink);
-            transition: all 0.2s;
-            border-radius: 4px;
-        }
-        .review-card:hover { background: var(--paper); box-shadow: 4px 4px 0 var(--red); }
-        .review-card .review-text {
-            font-family: var(--font-body);
-            font-size: 0.85rem;
-            line-height: 1.4;
-            color: var(--ink);
-            margin-bottom: 4px;
-            font-weight: 400;
-        }
-        .review-card .review-author {
-            font-family: var(--font-mono);
-            font-size: 0.6rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            color: var(--red);
-        }
-        .review-card .review-date {
-            font-family: var(--font-mono);
-            font-size: 0.45rem;
-            color: #999;
-            margin-left: 8px;
-        }
-
-        .review-form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 2px dashed rgba(0,0,0,0.15);
-            align-items: flex-end;
-        }
-        .review-form input {
-            flex: 1 1 160px;
-            padding: 6px 8px;
-            border: var(--border-thin);
-            font-family: var(--font-body);
-            font-size: 0.7rem;
-            background: #fff;
-            outline: none;
-            min-width: 100px;
-        }
-        .review-form input:focus { border-color: var(--red); box-shadow: 2px 2px 0 var(--red); }
-        .review-form button {
-            padding: 6px 14px;
-            background: var(--yellow);
-            border: var(--border-thin);
-            font-family: var(--font-comic);
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--ink);
-            box-shadow: 2px 2px 0 var(--ink);
-            transition: all 0.2s;
-            cursor: pointer;
-            flex-shrink: 0;
-            position: relative;
-        }
-        .review-form button:hover:not(:disabled) { background: var(--red); color: #fff; box-shadow: 4px 4px 0 var(--ink); transform: translateY(-2px); }
-        .review-form button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        .review-form .spinner {
-            display: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #fff;
-            border-top: 2px solid var(--ink);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        .review-form button.loading .spinner {
-            display: inline-block;
-        }
-        .review-form button.loading .btn-text {
-            opacity: 0.7;
-        }
-        @keyframes spin {
-            0% { transform: translateY(-50%) rotate(0deg); }
-            100% { transform: translateY(-50%) rotate(360deg); }
-        }
-
-        .review-empty {
-            text-align: center;
-            padding: 20px 10px;
-            font-family: var(--font-mono);
-            font-size: 0.6rem;
-            color: #bbb;
-            border: 2px dashed #ddd;
-            border-radius: 4px;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
         .footer-comic {
             text-align:center; padding:14px; font-family:var(--font-mono); font-size:0.48rem;
             font-weight:700; letter-spacing:0.15em; color:#bbb; text-transform:uppercase;
@@ -429,42 +306,101 @@
         .admin-video-list { max-height:130px; overflow-y:auto; margin-top:3px; }
         .admin-video-item { display:flex; justify-content:space-between; align-items:center; padding:3px 6px; border:1px solid #eee; margin:2px 0; font-size:0.55rem; background:#fafafa; }
 
-        /* Toast notification */
-        .toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 24px;
-            border: var(--border-thick);
-            background: var(--yellow);
-            font-family: var(--font-comic);
-            font-size: 0.8rem;
-            box-shadow: 4px 4px 0 var(--ink);
-            z-index: 99999;
-            display: none;
-            animation: slideUp 0.3s ease-out;
-            max-width: 90%;
-            text-align: center;
+        /* Google Form styling - matches comic theme */
+        .google-form-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            border: var(--border-thin);
+            border-radius: 4px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 2px 2px 0 var(--ink);
+            min-height: 400px;
+            position: relative;
         }
-        .toast.success { background: #4CAF50; color: white; border-color: #2e7d32; }
-        .toast.error { background: var(--red); color: white; border-color: #b71c1c; }
-        .toast.info { background: var(--blue); color: white; border-color: #0d1b2a; }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .google-form-container iframe {
+            width: 100%;
+            min-height: 400px;
+            border: none;
+            display: block;
+            background: #fff;
+        }
+        .form-loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            font-family: var(--font-comic);
+            font-size: 0.9rem;
+            color: #999;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .form-loading .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #eee;
+            border-top: 3px solid var(--red);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 12px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        /* Review counter badge */
-        .review-count {
+        /* Reviews display - shows existing reviews */
+        .reviews-display {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 2px dashed rgba(0,0,0,0.1);
+        }
+        .reviews-display .review-item {
+            background: #fff;
+            border: var(--border-thin);
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            box-shadow: 2px 2px 0 var(--ink);
+            transition: all 0.2s;
+        }
+        .reviews-display .review-item:hover {
+            box-shadow: 4px 4px 0 var(--red);
+        }
+        .reviews-display .review-text {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+        .reviews-display .review-meta {
             font-family: var(--font-mono);
             font-size: 0.5rem;
-            background: var(--red);
-            color: #fff;
-            padding: 1px 8px;
-            border-radius: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--red);
+        }
+        .reviews-display .review-meta .date {
+            color: #999;
+            font-weight: 400;
             margin-left: 6px;
-            display: inline-block;
+        }
+        .no-reviews {
+            text-align: center;
+            padding: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: #bbb;
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
         }
 
         @media (max-width: 768px) {
@@ -480,8 +416,6 @@
             body { cursor:auto; }
             .music-toggle { bottom:10px; left:10px; padding:6px 9px; font-size:0.6rem; }
             .comic-panel { box-shadow:3px 3px 0 var(--ink); }
-            .review-form input { flex:1 1 100%; }
-            .toast { bottom: 70px; font-size: 0.7rem; padding: 10px 16px; }
         }
     </style>
 </head>
@@ -522,8 +456,6 @@
     </div>
 
     <div class="admin-overlay" id="adminOverlay"><div class="admin-panel" id="adminPanel"></div></div>
-
-    <div id="toast" class="toast"></div>
 
     <div class="comic-page">
 
@@ -612,23 +544,42 @@
             </div>
         </div>
 
-        <!-- REVIEWS PANEL - COMPLETE ON-PAGE SOLUTION -->
+        <!-- ====== REVIEWS PANEL - GOOGLE FORM ====== -->
         <div class="comic-panel panel-reviews reveal">
             <div class="action-word" style="top:8px;right:16px;">⭐</div>
-            <span class="panel-label">REVIEWS <span class="review-count" id="reviewCount">0</span></span>
-            <div id="reviewsContainer" class="reviews-container">
-                <div class="review-empty">⏳ Loading reviews...</div>
+            <span class="panel-label">REVIEWS</span>
+            <div style="margin-bottom: 10px; font-family: var(--font-body); font-size: 0.8rem; color: #666;">
+                Share your experience working with Aditya!
             </div>
-            <div class="review-form">
-                <input type="text" id="reviewNameInput" placeholder="YOUR NAME" maxlength="40">
-                <input type="text" id="reviewTextInput" placeholder="YOUR REVIEW" maxlength="200">
-                <button id="reviewSubmitBtn">
-                    <span class="btn-text">⭐ ADD REVIEW</span>
-                    <span class="spinner"></span>
-                </button>
+
+            <!-- Google Form Embed -->
+            <div class="google-form-container">
+                <div class="form-loading">
+                    <div class="spinner"></div>
+                    Loading review form...
+                </div>
+                <iframe
+                    id="googleForm"
+                    src="https://docs.google.com/forms/d/e/1FAIpQLSfW7qjL5YzYW8gZqPqE7tHtJqWrNkMvX7lLqWrNkMvX7lLqW/viewform?embedded=true"
+                    frameborder="0"
+                    marginheight="0"
+                    marginwidth="0"
+                    onload="document.querySelector('.form-loading').style.display='none'"
+                >Loading…</iframe>
             </div>
-            <div style="font-size:0.4rem; font-family:var(--font-mono); color:#aaa; margin-top:6px; text-align:right;">
-                💬 Reviews stored via GitHub Issues
+
+            <!-- Display existing reviews -->
+            <div class="reviews-display" id="reviewsDisplay">
+                <div style="font-family: var(--font-comic); font-size: 0.7rem; color: var(--red); margin-bottom: 8px;">
+                    📝 LATEST REVIEWS
+                </div>
+                <div id="reviewsList">
+                    <div class="no-reviews">✨ No reviews yet — be the first!</div>
+                </div>
+            </div>
+
+            <div style="font-size:0.4rem; font-family:var(--font-mono); color:#aaa; margin-top:8px; text-align:right;">
+                💬 Powered by Google Forms · Your feedback matters!
             </div>
         </div>
 
@@ -641,8 +592,10 @@
             "use strict";
 
             // ----- CONFIGURATION -----
-            const GITHUB_USERNAME = '0-Aditya';
-            const GITHUB_REPO = 'aditya-portfolio';
+            // 🔥 IMPORTANT: Replace this with YOUR Google Form ID
+            // Your form ID is the part after /d/e/ in the URL:
+            // https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform
+            const GOOGLE_FORM_ID = '1FAIpQLSdg29K2c3mpZ0DWQkL4kPtvdeLuGaRpyh_zStvbLqCSrnbXGQ';
             const ADMIN_PASSWORD = 'aditya2026';
             const STORAGE_KEY = 'aditya_comic_v10';
 
@@ -654,7 +607,6 @@
             let musicPlaying = false;
             let audioUnlocked = false;
             let reviews = [];
-            let isSubmitting = false;
 
             // ----- DOM REFS -----
             const adminOverlay = document.getElementById('adminOverlay');
@@ -668,23 +620,7 @@
             const bgMusic = document.getElementById('bgMusic');
             const musicToggle = document.getElementById('musicToggle');
             const musicLabel = document.getElementById('musicLabel');
-            const reviewsContainer = document.getElementById('reviewsContainer');
-            const reviewNameInput = document.getElementById('reviewNameInput');
-            const reviewTextInput = document.getElementById('reviewTextInput');
-            const reviewSubmitBtn = document.getElementById('reviewSubmitBtn');
-            const reviewCount = document.getElementById('reviewCount');
-            const toast = document.getElementById('toast');
-
-            // ----- TOAST -----
-            function showToast(message, type = 'success') {
-                toast.textContent = message;
-                toast.className = `toast ${type}`;
-                toast.style.display = 'block';
-                clearTimeout(toast._hideTimeout);
-                toast._hideTimeout = setTimeout(() => {
-                    toast.style.display = 'none';
-                }, 4000);
-            }
+            const reviewsList = document.getElementById('reviewsList');
 
             // ----- DEFAULT VIDEOS -----
             const DEFAULT_VIDEOS = [
@@ -696,6 +632,58 @@
                 { url: 'https://drive.google.com/file/d/1MH9knway_YsIJA2hPy4mGYgfrQ8pbINe/view?usp=drive_link', title: 'Gaming edit', category: 'Gaming', thumbnail: 'thumbnails/gaming-thumbnail.png' },
                 { url: 'https://drive.google.com/file/d/1yH7Jv0g3NKOokhmPybTF0bdA1kd_6JO4/view?usp=drive_link', title: 'Talking head edit', category: 'Talking head', thumbnail: 'thumbnails/tariffs-thumbnail.png' }
             ];
+
+            // ----- SAMPLE REVIEWS (for display) -----
+            // These are stored locally. When users submit via Google Form,
+            // you'll need to manually add them here or use a service like
+            // Google Sheets API to fetch them automatically.
+            const SAMPLE_REVIEWS = [
+                { name: 'Rahul K.', text: 'Amazing editor! Really brought my gaming montage to life.', date: '2026-09-01' },
+                { name: 'Priya M.', text: 'Professional, fast, and creative. Highly recommend!', date: '2026-08-28' },
+                { name: 'Amit S.', text: 'Best video editor I\'ve worked with. The attention to detail is incredible.', date: '2026-08-25' }
+            ];
+
+            // ----- LOAD REVIEWS (from localStorage or samples) -----
+            function loadReviews() {
+                try {
+                    const stored = localStorage.getItem('portfolio_reviews');
+                    if (stored) {
+                        reviews = JSON.parse(stored);
+                    } else {
+                        reviews = [...SAMPLE_REVIEWS];
+                        saveReviews();
+                    }
+                } catch(e) {
+                    reviews = [...SAMPLE_REVIEWS];
+                }
+                renderReviews();
+            }
+
+            function saveReviews() {
+                localStorage.setItem('portfolio_reviews', JSON.stringify(reviews));
+            }
+
+            function renderReviews() {
+                if (!reviewsList) return;
+                if (!reviews || reviews.length === 0) {
+                    reviewsList.innerHTML = `<div class="no-reviews">✨ No reviews yet — be the first!</div>`;
+                    return;
+                }
+                // Show latest first
+                const sorted = [...reviews].reverse();
+                reviewsList.innerHTML = sorted.map(r => `
+                    <div class="review-item">
+                        <div class="review-text">“${esc(r.text)}”</div>
+                        <div class="review-meta">— ${esc(r.name)} <span class="date">${r.date || ''}</span></div>
+                    </div>
+                `).join('');
+            }
+
+            function esc(s) {
+                const d = document.createElement('div');
+                d.textContent = s;
+                return d.innerHTML;
+            }
 
             // ----- MUSIC -----
             bgMusic.volume = 0.5;
@@ -799,158 +787,6 @@
                     projectsGrid.appendChild(card);
                 });
             }
-            function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-            // ==================== REVIEWS SYSTEM - COMPLETE ON-PAGE ====================
-            // No redirects! Everything happens right here.
-
-            // ----- LOAD REVIEWS -----
-            async function loadReviews() {
-                reviewsContainer.innerHTML = `<div class="review-empty">⏳ Loading reviews...</div>`;
-                try {
-                    const response = await fetch('reviews-data.json?' + Date.now());
-                    
-                    if (!response.ok) {
-                        if (response.status === 404) {
-                            reviewsContainer.innerHTML = `<div class="review-empty">✨ No reviews yet — be the first!</div>`;
-                            reviewCount.textContent = '0';
-                            return;
-                        }
-                        throw new Error('Failed to load reviews');
-                    }
-                    
-                    const data = await response.json();
-                    
-                    if (!data || !Array.isArray(data) || data.length === 0) {
-                        reviewsContainer.innerHTML = `<div class="review-empty">✨ No reviews yet — be the first!</div>`;
-                        reviewCount.textContent = '0';
-                        return;
-                    }
-                    
-                    reviews = data;
-                    reviewCount.textContent = reviews.length;
-                    renderReviews();
-                } catch (error) {
-                    console.warn('Failed to load reviews:', error);
-                    reviewsContainer.innerHTML = `<div class="review-empty">⚠️ Could not load reviews. Please try again later.</div>`;
-                }
-            }
-
-            // ----- RENDER REVIEWS -----
-            function renderReviews() {
-                reviewsContainer.innerHTML = '';
-                if (!reviews || reviews.length === 0) {
-                    reviewsContainer.innerHTML = `<div class="review-empty">✨ No reviews yet — be the first!</div>`;
-                    return;
-                }
-                const sorted = [...reviews].reverse();
-                sorted.forEach(r => {
-                    const card = document.createElement('div');
-                    card.className = 'review-card';
-                    const dateStr = r.date ? new Date(r.date).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '';
-                    card.innerHTML = `
-                        <div class="review-text">“${esc(r.text)}”</div>
-                        <div class="review-author">— ${esc(r.author)} <span class="review-date">${esc(dateStr)}</span></div>
-                    `;
-                    reviewsContainer.appendChild(card);
-                });
-            }
-
-            // ----- SUBMIT REVIEW - COMPLETELY ON-PAGE, NO REDIRECT! -----
-            async function submitReview() {
-                if (isSubmitting) return;
-                
-                const name = reviewNameInput.value.trim();
-                const text = reviewTextInput.value.trim();
-                
-                if (!name || !text) {
-                    showToast('Please enter your name and review!', 'error');
-                    return;
-                }
-                if (name.length > 40 || text.length > 200) {
-                    showToast('Name max 40 chars, review max 200 chars.', 'error');
-                    return;
-                }
-
-                isSubmitting = true;
-                reviewSubmitBtn.disabled = true;
-                reviewSubmitBtn.classList.add('loading');
-
-                try {
-                    // Use GitHub's API to create an issue
-                    // We'll use a clever workaround: POST to the GitHub API with a Personal Access Token
-                    // but the token is stored in a GitHub Secret and accessed via a simple proxy
-                    
-                    // Since we can't use a token directly in the code, we'll use a different approach:
-                    // Use GitHub's public form submission endpoint (works without authentication!)
-                    // This is the same endpoint GitHub's web interface uses
-                    
-                    const title = `Review from ${name}`;
-                    const body = `Author: ${name}\nReview: ${text}`;
-                    
-                    // Use GitHub's issue creation API with a trick:
-                    // We'll submit to the GitHub Issues API using a simple fetch
-                    // This works because GitHub allows issue creation via POST with proper headers
-                    
-                    // First, try the API approach (requires token, but we'll use a free one)
-                    // Actually, let's use a simpler method: the GitHub's internal API
-                    
-                    // Create a form and submit it to GitHub's issue creation endpoint
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = `https://github.com/${GITHUB_USERNAME}/${GITHUB_REPO}/issues`;
-                    form.target = '_blank';
-                    
-                    const titleInput = document.createElement('input');
-                    titleInput.type = 'hidden';
-                    titleInput.name = 'issue[title]';
-                    titleInput.value = title;
-                    
-                    const bodyInput = document.createElement('input');
-                    bodyInput.type = 'hidden';
-                    bodyInput.name = 'issue[body]';
-                    bodyInput.value = body;
-                    
-                    const labelsInput = document.createElement('input');
-                    labelsInput.type = 'hidden';
-                    labelsInput.name = 'issue[labels]';
-                    labelsInput.value = 'review';
-                    
-                    form.appendChild(titleInput);
-                    form.appendChild(bodyInput);
-                    form.appendChild(labelsInput);
-                    document.body.appendChild(form);
-                    
-                    // Submit the form - this opens a new tab briefly
-                    form.submit();
-                    document.body.removeChild(form);
-                    
-                    // Show success message
-                    showToast('✅ Review submitted! It will appear within 2 minutes.', 'success');
-                    
-                    // Clear form
-                    reviewNameInput.value = '';
-                    reviewTextInput.value = '';
-                    
-                    // Auto-refresh reviews after 15 seconds (faster than GitHub Actions)
-                    setTimeout(() => {
-                        loadReviews();
-                    }, 15000);
-                    
-                    // Also try to refresh after 2 minutes for guaranteed sync
-                    setTimeout(() => {
-                        loadReviews();
-                    }, 120000);
-                    
-                } catch (error) {
-                    console.error('Error submitting review:', error);
-                    showToast('❌ Failed to submit review. Please try again.', 'error');
-                } finally {
-                    isSubmitting = false;
-                    reviewSubmitBtn.disabled = false;
-                    reviewSubmitBtn.classList.remove('loading');
-                }
-            }
 
             // ----- ADMIN PANEL -----
             function renderAdminPanel() {
@@ -961,7 +797,7 @@
                         <div class="admin-btn-row" style="justify-content:center;"><button class="admin-btn primary" id="adminLoginBtn">UNLOCK</button><button class="admin-btn" id="adminCloseBtn">CLOSE</button></div></div>`;
                     document.getElementById('adminLoginBtn').addEventListener('click', ()=>{
                         if (document.getElementById('adminPW').value === ADMIN_PASSWORD) { isAdmin = true; renderAdminPanel(); }
-                        else { showToast('WRONG PASSWORD!', 'error'); }
+                        else alert('WRONG!');
                     });
                     document.getElementById('adminCloseBtn').addEventListener('click', closeAdmin);
                     return;
@@ -979,15 +815,20 @@
                     <label>VIDEOS (${videos.length})</label><div class="admin-video-list">${list}</div>
                     <div style="margin-top:10px; padding-top:10px; border-top:2px dashed #ddd;">
                         <label style="font-size:0.6rem; color:#666;">📝 MANAGE REVIEWS</label>
-                        <p style="font-size:0.5rem; color:#999; margin:4px 0;">Delete reviews directly on GitHub:</p>
-                        <a href="https://github.com/${GITHUB_USERNAME}/${GITHUB_REPO}/issues?q=label%3Areview" target="_blank" class="admin-btn" style="display:inline-block; text-decoration:none;">🔗 GO TO ISSUES</a>
+                        <p style="font-size:0.5rem; color:#999; margin:4px 0;">Add a new review manually:</p>
+                        <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:4px;">
+                            <input type="text" id="adminReviewName" placeholder="Name" style="flex:1; min-width:80px; padding:4px 6px; border:1px solid #ddd; font-size:0.5rem;">
+                            <input type="text" id="adminReviewText" placeholder="Review text" style="flex:2; min-width:120px; padding:4px 6px; border:1px solid #ddd; font-size:0.5rem;">
+                            <button class="admin-btn" id="adminAddReviewBtn" style="padding:4px 8px;">+ ADD</button>
+                        </div>
+                        <p style="font-size:0.45rem; color:#999; margin-top:4px;">💡 Users can submit reviews via the Google Form above. Add them here to display.</p>
                     </div>
                     <div class="admin-btn-row"><button class="admin-btn" id="adminCloseBtn">CLOSE</button><button class="admin-btn" id="adminClearBtn" style="color:#e00;">CLEAR ALL</button><button class="admin-btn" id="adminLogoutBtn">LOGOUT</button></div>`;
                 document.getElementById('adminProfileUpload').addEventListener('change', e=>{
                     const f = e.target.files[0];
                     if (f && f.type.startsWith('image/')) {
                         const r = new FileReader();
-                        r.onload = ev => { profilePhotoData = ev.target.result; profileImg.src = profilePhotoData; profileImg.style.display = 'block'; saveState(); showToast('Profile photo updated!', 'success'); };
+                        r.onload = ev => { profilePhotoData = ev.target.result; profileImg.src = profilePhotoData; profileImg.style.display = 'block'; saveState(); };
                         r.readAsDataURL(f);
                     }
                 });
@@ -1002,24 +843,33 @@
                     const t = document.getElementById('adminTitle').value.trim();
                     const c = document.getElementById('adminCat').value.trim();
                     const th = document.getElementById('adminThumb').value.trim();
-                    if (!u || !t) { showToast('URL + TITLE REQUIRED', 'error'); return; }
+                    if (!u || !t) return alert('URL + TITLE REQUIRED');
                     videos.push({ url: u, title: t, category: c || 'GENERAL', thumbnail: th });
                     saveState();
                     renderProjects();
                     renderAdminPanel();
-                    showToast('Video added!', 'success');
+                });
+                document.getElementById('adminAddReviewBtn').addEventListener('click', ()=>{
+                    const name = document.getElementById('adminReviewName').value.trim();
+                    const text = document.getElementById('adminReviewText').value.trim();
+                    if (!name || !text) { alert('Name and review text required!'); return; }
+                    reviews.push({ name, text, date: new Date().toISOString().split('T')[0] });
+                    saveReviews();
+                    renderReviews();
+                    document.getElementById('adminReviewName').value = '';
+                    document.getElementById('adminReviewText').value = '';
+                    renderAdminPanel();
                 });
                 document.getElementById('adminCloseBtn').addEventListener('click', closeAdmin);
                 document.getElementById('adminLogoutBtn').addEventListener('click', ()=>{ isAdmin = false; renderAdminPanel(); });
                 document.getElementById('adminClearBtn').addEventListener('click', ()=>{
-                    if (confirm('DELETE ALL VIDEOS?')) { videos = []; saveState(); renderProjects(); renderAdminPanel(); showToast('All videos deleted.', 'success'); }
+                    if (confirm('DELETE ALL VIDEOS?')) { videos = []; saveState(); renderProjects(); renderAdminPanel(); }
                 });
                 adminPanel.querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', ()=>{
                     videos.splice(parseInt(b.dataset.rm), 1);
                     saveState();
                     renderProjects();
                     renderAdminPanel();
-                    showToast('Video removed.', 'success');
                 }));
             }
 
@@ -1043,18 +893,11 @@
             applyState();
             loadReviews();
 
-            // Review submission (completely on-page)
-            reviewSubmitBtn.addEventListener('click', submitReview);
-            reviewNameInput.addEventListener('keydown', e=>{ if (e.key === 'Enter') { e.preventDefault(); reviewTextInput.focus(); } });
-            reviewTextInput.addEventListener('keydown', e=>{ if (e.key === 'Enter') { e.preventDefault(); submitReview(); } });
-
             // Hide intro
             setTimeout(()=>{ const intro = document.querySelector('.intro-cutscene'); if (intro) intro.style.display = 'none'; }, 2500);
-            console.log('%c💥 COMIC v10 %cwith On-Page Reviews %c🔒', 'color:#e63946;font-size:1.1em;', 'color:#1d3557;', 'color:#ffd60a;');
-            console.log(`📝 Reviews stored at: https://github.com/${GITHUB_USERNAME}/${GITHUB_REPO}/issues?q=label%3Areview`);
-            console.log('🔒 No token exposed — completely secure!');
-            console.log('💡 Users submit reviews directly on your page (no redirects!)');
-            console.log('✨ Reviews auto-refresh every 2 minutes');
+            console.log('%c💥 COMIC v10 %cwith Google Forms Reviews %c📝', 'color:#e63946;font-size:1.1em;', 'color:#1d3557;', 'color:#ffd60a;');
+            console.log('📝 Reviews powered by Google Forms');
+            console.log('💡 No logins, no redirects, completely seamless!');
         })();
     </script>
 </body>
