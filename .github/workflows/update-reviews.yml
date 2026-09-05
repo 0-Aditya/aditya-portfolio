@@ -2,10 +2,10 @@ name: Update Reviews Data
 
 on:
   issues:
-    types: [opened, closed, edited, deleted, labeled]
+    types: [opened, closed, edited, deleted, labeled, unlabeled]
   schedule:
     - cron: '0 */2 * * *'  # Every 2 hours
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch:  # Manual trigger from GitHub UI
 
 jobs:
   update-reviews:
@@ -28,11 +28,14 @@ jobs:
             "https://api.github.com/repos/${{ github.repository }}/issues?labels=review&state=open&per_page=100" \
             > reviews-raw.json
           
-          # Parse and format the reviews
+          # Parse and format the reviews into a clean JSON array
           echo '[' > reviews-data.json
           jq -r '.[] | {author: (.body | capture("Author: (?<author>[^\\n]+)") | .author // "Anonymous"), text: (.body | capture("Review: (?<text>[^\\n]+)") | .text // ""), date: .created_at, id: .id}' reviews-raw.json | \
           jq -s '.' >> reviews-data.json
           echo ']' >> reviews-data.json
+          
+          # Clean up
+          rm reviews-raw.json
       
       - name: Commit and push updates
         run: |
