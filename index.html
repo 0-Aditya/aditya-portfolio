@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ADITYA SHRIVASTAVA — EDITOR</title>
-    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFhSURBVDhPrZPNSsNAEIZnI6LVggW16jX0UCIUfFbRq9dgPIIPIfQgKLhIIfgD4kkFBQ9KvQYRT16Cl/6ADsxAJZ0tNWRrVj60++3uM7PfTgLn3K7X6z1P07RRSq/FYpnt9Xr3QgjPdd2XNE1fuq77GMbxnxB5URQ1Lg/wFkVRaRRFnSRJg8/z3G02m63NZvM+wTzPm4ODg6vvx5R+NBqNW2ut5R7GcYx+v4+O48D3fex2OyiKAnmeL1JKXU3zK/w0TTOUZYl+vz8xy7I0YYzBOYdpmogimTAvL5RSuuZ/AhwHwTAMI2JcXFyg3W5f1nX9NZN2AF3Xj4/HY5tS2syy7NxsNr0S+CelFIZhGE3TeBiGJMY4nuP5MMZgGAYuLy9R1zWEENhsNuO+7zca8gJgtVpBCAFK6QSlFEophBCQUsJ7D8YYZrPZL6D3/BYYYxBFEWq6/ul9Pwr9yJuNJ4duAAAAAElFTkSuQmCC">
     <style>
+        /* ----- COMIC ROOTS (font improved for readability) ----- */
         :root {
             --ink: #111111;
             --paper: #fffef5;
@@ -14,34 +15,21 @@
             --yellow: #ffd60a;
             --pop: #f72585;
             --halftone: rgba(0, 0, 0, 0.05);
-            --font-comic: 'Bangers', 'Fredoka One', cursive;
+            --font-comic: 'Fredoka One', 'Bangers', 'Comic Neue', cursive;
             --font-mono: 'JetBrains Mono', 'Courier New', monospace;
-            --font-body: 'Inter', 'Segoe UI', sans-serif;
+            --font-body: 'Comic Neue', 'Inter', 'Segoe UI', cursive, sans-serif;
             --border-thick: 3px solid var(--ink);
             --border-thin: 2px solid var(--ink);
         }
-        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka+One&family=JetBrains+Mono:wght@500;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html {
-            scroll-behavior: smooth;
-            scrollbar-width: thin;
-            scrollbar-color: var(--ink) var(--paper);
-        }
-        html::-webkit-scrollbar {
-            width: 5px;
-        }
-        html::-webkit-scrollbar-track {
-            background: var(--paper);
-        }
-        html::-webkit-scrollbar-thumb {
-            background: var(--ink);
-            border-radius: 2px;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Bangers&family=Comic+Neue:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap');
+
+        /* ----- RESET & BASE ----- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--ink) var(--paper); }
+        html::-webkit-scrollbar { width: 5px; }
+        html::-webkit-scrollbar-track { background: var(--paper); }
+        html::-webkit-scrollbar-thumb { background: var(--ink); border-radius: 2px; }
         body {
             font-family: var(--font-body);
             background: var(--paper);
@@ -55,888 +43,398 @@
             background-size: 10px 10px;
         }
 
-        .comic-bg-layer {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.03;
-            mix-blend-mode: multiply;
-        }
-        .comic-bg-layer svg {
-            width: 100%;
-            height: 100%;
-        }
+        .comic-bg-layer { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.03; mix-blend-mode: multiply; }
+        .comic-bg-layer svg { width: 100%; height: 100%; }
         .dot-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0.15;
-            background-image: radial-gradient(circle, rgba(0, 0, 0, 0.3) 1px, transparent 1px);
-            background-size: 7px 7px;
-            mix-blend-mode: multiply;
+            position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.12;
+            background-image: radial-gradient(circle, rgba(0,0,0,0.25) 1px, transparent 1px);
+            background-size: 7px 7px; mix-blend-mode: multiply;
         }
 
+        /* ----- MUSIC TOGGLE ----- */
         .music-toggle {
-            position: fixed;
-            bottom: 16px;
-            left: 16px;
-            z-index: 9999;
-            background: var(--yellow);
-            border: var(--border-thick);
-            padding: 7px 11px;
-            cursor: pointer;
-            font-family: var(--font-comic);
-            font-size: 0.7rem;
-            color: var(--ink);
-            box-shadow: 3px 3px 0 var(--ink);
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            user-select: none;
+            position: fixed; bottom: 16px; left: 16px; z-index: 9999;
+            background: var(--yellow); border: var(--border-thick); padding: 7px 11px;
+            cursor: pointer; font-family: var(--font-comic); font-size: 0.7rem;
+            color: var(--ink); box-shadow: 3px 3px 0 var(--ink); transition: all 0.3s;
+            text-transform: uppercase; letter-spacing: 0.03em; display: flex;
+            align-items: center; gap: 5px; user-select: none;
         }
-        .music-toggle:hover {
-            background: var(--red);
-            color: #fff;
-            box-shadow: 5px 5px 0 var(--ink);
-            transform: translateY(-2px);
-        }
-        .music-toggle.muted {
-            background: #fff;
-            color: #999;
-        }
-        .music-toggle .sound-icon {
-            font-size: 0.9rem;
-        }
-        .music-toggle .equalizer {
-            display: flex;
-            gap: 2px;
-            align-items: flex-end;
-            height: 10px;
-        }
-        .music-toggle .eq-bar {
-            width: 2px;
-            background: var(--ink);
-            border-radius: 1px;
-        }
-        .music-toggle.muted .eq-bar {
-            background: #ccc;
-            height: 2px !important;
-        }
-        .music-toggle:not(.muted) .eq-bar:nth-child(1) {
-            animation: eq1 0.5s ease-in-out infinite alternate;
-        }
-        .music-toggle:not(.muted) .eq-bar:nth-child(2) {
-            animation: eq2 0.4s ease-in-out infinite alternate 0.1s;
-        }
-        .music-toggle:not(.muted) .eq-bar:nth-child(3) {
-            animation: eq3 0.55s ease-in-out infinite alternate 0.2s;
-        }
-        @keyframes eq1 {
-            from {
-                height: 2px;
-            }
-            to {
-                height: 8px;
-            }
-        }
-        @keyframes eq2 {
-            from {
-                height: 4px;
-            }
-            to {
-                height: 10px;
-            }
-        }
-        @keyframes eq3 {
-            from {
-                height: 1px;
-            }
-            to {
-                height: 7px;
-            }
-        }
+        .music-toggle:hover { background: var(--red); color: #fff; box-shadow: 5px 5px 0 var(--ink); transform: translateY(-2px); }
+        .music-toggle.muted { background: #fff; color: #999; }
+        .music-toggle .sound-icon { font-size: 0.9rem; }
+        .music-toggle .equalizer { display: flex; gap: 2px; align-items: flex-end; height: 10px; }
+        .music-toggle .eq-bar { width: 2px; background: var(--ink); border-radius: 1px; }
+        .music-toggle.muted .eq-bar { background: #ccc; height: 2px !important; }
+        .music-toggle:not(.muted) .eq-bar:nth-child(1) { animation: eq1 0.5s ease-in-out infinite alternate; }
+        .music-toggle:not(.muted) .eq-bar:nth-child(2) { animation: eq2 0.4s ease-in-out infinite alternate 0.1s; }
+        .music-toggle:not(.muted) .eq-bar:nth-child(3) { animation: eq3 0.55s ease-in-out infinite alternate 0.2s; }
+        @keyframes eq1 { from { height:2px; } to { height:8px; } }
+        @keyframes eq2 { from { height:4px; } to { height:10px; } }
+        @keyframes eq3 { from { height:1px; } to { height:7px; } }
 
+        /* ----- INTRO CUTSCENE ----- */
         .intro-cutscene {
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
-            background: var(--paper);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            pointer-events: none;
-            animation: cutsceneExit 0.6s cubic-bezier(0.7, 0, 1, 1) 2s forwards;
+            position: fixed; inset: 0; z-index: 10000; background: var(--paper);
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+            pointer-events: none; animation: cutsceneExit 0.6s cubic-bezier(0.7,0,1,1) 2s forwards;
             border: 12px solid var(--ink);
-            background-image: radial-gradient(circle, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+            background-image: radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px);
             background-size: 9px 9px;
         }
         @keyframes cutsceneExit {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-                filter: blur(0);
-            }
-            100% {
-                opacity: 0;
-                transform: scale(2.5);
-                filter: blur(30px);
-                pointer-events: none;
-            }
+            0% { opacity:1; transform:scale(1); filter:blur(0); }
+            100% { opacity:0; transform:scale(2.5); filter:blur(30px); pointer-events:none; }
         }
         .intro-panel {
-            text-align: center;
-            position: relative;
-            border: 6px solid var(--ink);
-            padding: 35px 45px;
-            background: var(--yellow);
-            box-shadow: 10px 10px 0 var(--ink);
-            animation: panelSlam 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+            text-align: center; position: relative; border: 6px solid var(--ink);
+            padding: 35px 45px; background: var(--yellow); box-shadow: 10px 10px 0 var(--ink);
+            animation: panelSlam 0.45s cubic-bezier(0.34,1.56,0.64,1) 0.15s both;
         }
         @keyframes panelSlam {
-            0% {
-                transform: scale(3);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0% { transform:scale(3); opacity:0; }
+            100% { transform:scale(1); opacity:1; }
         }
         .intro-panel .intro-name {
-            font-family: var(--font-comic);
-            font-size: clamp(3rem, 8vw, 6rem);
-            font-weight: 400;
-            color: var(--ink);
-            text-transform: uppercase;
-            letter-spacing: 0.01em;
-            line-height: 0.85;
+            font-family: var(--font-comic); font-size: clamp(3rem,8vw,6rem);
+            font-weight: 400; color: var(--ink); text-transform: uppercase;
+            letter-spacing: 0.01em; line-height: 0.85;
         }
         .intro-sub {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 0.25em;
-            color: var(--ink);
-            margin-top: 10px;
+            font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 0.25em; color: var(--ink); margin-top: 10px;
             animation: subPop 0.35s ease-out 0.7s both;
         }
-        @keyframes subPop {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        @keyframes subPop { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
         .intro-boom {
-            position: absolute;
-            top: -40px;
-            right: -30px;
-            font-family: var(--font-comic);
-            font-size: 2.5rem;
-            color: var(--red);
-            animation: boomPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.9s both;
+            position: absolute; top: -40px; right: -30px;
+            font-family: var(--font-comic); font-size: 2.5rem; color: var(--red);
+            animation: boomPop 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.9s both;
         }
-        @keyframes boomPop {
-            0% {
-                transform: scale(0);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
+        @keyframes boomPop { from { transform:scale(0); opacity:0; } to { transform:scale(1); opacity:1; } }
 
-        .cursors-layer {
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            pointer-events: none;
-            mix-blend-mode: normal;
-        }
+        /* ----- CURSORS ----- */
+        .cursors-layer { position: fixed; inset: 0; z-index: 99999; pointer-events: none; mix-blend-mode: normal; }
         .cursor-ink {
-            position: absolute;
-            width: 22px;
-            height: 22px;
-            background: var(--ink);
-            transform: translate(-50%, -50%) rotate(45deg);
-            transition: left 0.04s linear, top 0.04s linear;
-            box-shadow: 2px 2px 0 var(--red);
-            clip-path: polygon(0 0, 100% 0, 0 100%);
+            position: absolute; width: 22px; height: 22px; background: var(--ink);
+            transform: translate(-50%,-50%) rotate(45deg); transition: left 0.04s linear, top 0.04s linear;
+            box-shadow: 2px 2px 0 var(--red); clip-path: polygon(0 0, 100% 0, 0 100%);
         }
         .cursor-splat {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: var(--pop);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
+            position: absolute; width: 10px; height: 10px; background: var(--pop);
+            border-radius: 50%; transform: translate(-50%,-50%);
             transition: left 0.08s ease-out, top 0.08s ease-out;
             box-shadow: 0 0 6px var(--pop), 0 0 12px var(--pop);
         }
 
+        /* ----- COMIC PAGE LAYOUT ----- */
         .comic-page {
-            position: relative;
-            z-index: 10;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 16px 12px;
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 10px;
+            position: relative; z-index: 10; max-width: 1100px; margin: 0 auto;
+            padding: 16px 12px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;
         }
-
         .comic-panel {
-            background: #fff;
-            border: var(--border-thick);
-            padding: 14px 16px;
-            position: relative;
-            transition: all 0.3s;
-            box-shadow: 4px 4px 0 var(--ink);
+            background: #fff; border: var(--border-thick); padding: 14px 16px;
+            position: relative; transition: all 0.3s; box-shadow: 4px 4px 0 var(--ink);
             overflow: hidden;
         }
-        .comic-panel:hover {
-            z-index: 20;
-            box-shadow: 6px 6px 0 var(--red);
-        }
+        .comic-panel:hover { z-index:20; box-shadow: 6px 6px 0 var(--red); }
         .comic-panel::after {
-            content: '';
-            position: absolute;
-            inset: 2px;
-            border: 1px dashed rgba(0, 0, 0, 0.08);
-            pointer-events: none;
+            content: ''; position: absolute; inset: 2px;
+            border: 1px dashed rgba(0,0,0,0.08); pointer-events: none;
         }
-
-        .panel-hero {
-            grid-column: span 6;
-        }
-        .panel-projects {
-            grid-column: span 3;
-        }
-        .panel-stats {
-            grid-column: span 3;
-        }
-        .panel-experience {
-            grid-column: span 3;
-        }
-        .panel-resume {
-            grid-column: span 3;
-        }
-        .panel-contact {
-            grid-column: span 6;
-        }
+        .panel-hero { grid-column: span 6; }
+        .panel-projects { grid-column: span 3; }
+        .panel-stats { grid-column: span 3; }
+        .panel-experience { grid-column: span 3; }
+        .panel-resume { grid-column: span 3; }
+        .panel-contact { grid-column: span 6; }
+        .panel-reviews { grid-column: span 6; }
 
         .speech-bubble {
-            position: relative;
-            background: #fff;
-            border: var(--border-thick);
-            border-radius: 16px;
-            padding: 6px 12px;
-            display: inline-block;
-            font-family: var(--font-comic);
-            font-size: 0.75rem;
-            color: var(--ink);
+            position: relative; background: #fff; border: var(--border-thick);
+            border-radius: 16px; padding: 6px 12px; display: inline-block;
+            font-family: var(--font-comic); font-size: 0.75rem; color: var(--ink);
             box-shadow: 2px 2px 0 var(--ink);
         }
         .speech-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -12px;
-            left: 18px;
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 12px solid var(--ink);
+            content: ''; position: absolute; bottom: -12px; left: 18px;
+            width: 0; height: 0; border-left: 8px solid transparent;
+            border-right: 8px solid transparent; border-top: 12px solid var(--ink);
         }
         .speech-bubble::before {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 20px;
-            width: 0;
-            height: 0;
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            border-top: 8px solid #fff;
-            z-index: 1;
+            content: ''; position: absolute; bottom: -8px; left: 20px;
+            width: 0; height: 0; border-left: 6px solid transparent;
+            border-right: 6px solid transparent; border-top: 8px solid #fff; z-index:1;
         }
 
         .panel-label {
-            font-family: var(--font-comic);
-            font-size: 1rem;
-            color: var(--red);
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-            margin-bottom: 8px;
-            display: inline-block;
-            background: var(--yellow);
-            padding: 2px 8px;
+            font-family: var(--font-comic); font-size: 1rem; color: var(--red);
+            text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 8px;
+            display: inline-block; background: var(--yellow); padding: 2px 8px;
             border: 2px solid var(--ink);
         }
 
-        .hero-comic {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            flex-wrap: wrap;
-        }
-        .hero-visual {
-            flex-shrink: 0;
-            position: relative;
-        }
+        /* ----- HERO ----- */
+        .hero-comic { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+        .hero-visual { flex-shrink: 0; position: relative; }
         .profile-comic-frame {
-            width: 160px;
-            height: 160px;
-            border: var(--border-thick);
-            overflow: hidden;
-            box-shadow: 5px 5px 0 var(--ink);
-            background: var(--paper);
+            width: 160px; height: 160px; border: var(--border-thick);
+            overflow: hidden; box-shadow: 5px 5px 0 var(--ink); background: var(--paper);
         }
-        .profile-comic-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            filter: contrast(1.1) saturate(1.05);
-        }
-        .profile-comic-frame .img-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            background: #f0f0e8;
-            color: #ccc;
-        }
-        .speech-float {
-            position: absolute;
-            top: -28px;
-            right: -35px;
-            z-index: 10;
-        }
-        .hero-info .name-comic {
-            font-family: var(--font-comic);
-            font-size: clamp(2.2rem, 5vw, 4rem);
-            font-weight: 400;
-            line-height: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 0.01em;
-        }
-        .hero-info .name-comic .nc1 {
-            color: var(--ink);
-            display: block;
-        }
-        .hero-info .name-comic .nc2 {
-            color: var(--red);
-            display: block;
-            margin-left: 25px;
-        }
+        .profile-comic-frame img { width:100%; height:100%; object-fit:cover; display:block; filter: contrast(1.1) saturate(1.05); }
+        .profile-comic-frame .img-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:40px; background:#f0f0e8; color:#ccc; }
+        .speech-float { position: absolute; top: -28px; right: -35px; z-index:10; }
+        .hero-info .name-comic { font-family: var(--font-comic); font-size: clamp(2.2rem,5vw,4rem); font-weight:400; line-height:0.9; text-transform:uppercase; letter-spacing:0.01em; }
+        .hero-info .name-comic .nc1 { color:var(--ink); display:block; }
+        .hero-info .name-comic .nc2 { color:var(--red); display:block; margin-left:25px; }
         .hero-info .tag-comic {
-            font-family: var(--font-mono);
-            font-size: 0.62rem;
-            font-weight: 700;
-            letter-spacing: 0.15em;
-            color: var(--ink);
-            text-transform: uppercase;
-            margin-top: 8px;
-            background: var(--yellow);
-            display: inline-block;
-            padding: 3px 8px;
-            border: 2px solid var(--ink);
+            font-family: var(--font-mono); font-size:0.62rem; font-weight:700;
+            letter-spacing:0.15em; color:var(--ink); text-transform:uppercase;
+            margin-top:8px; background:var(--yellow); display:inline-block;
+            padding:3px 8px; border:2px solid var(--ink);
         }
 
+        /* ----- PROJECTS ----- */
         .projects-mini-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            max-height: 430px;
-            overflow-y: auto;
-            padding-right: 6px;
+            display: grid; grid-template-columns: 1fr 1fr; gap:8px;
+            max-height:430px; overflow-y:auto; padding-right:6px;
         }
-        .projects-mini-grid::-webkit-scrollbar {
-            width: 8px;
-        }
-        .projects-mini-grid::-webkit-scrollbar-track {
-            background: #f0f0ea;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-        .projects-mini-grid::-webkit-scrollbar-thumb {
-            background: var(--ink);
-            border-radius: 4px;
-            border: 2px solid #f0f0ea;
-        }
-        .projects-mini-grid::-webkit-scrollbar-thumb:hover {
-            background: var(--red);
-        }
-
+        .projects-mini-grid::-webkit-scrollbar { width:8px; }
+        .projects-mini-grid::-webkit-scrollbar-track { background:#f0f0ea; border-radius:4px; border:1px solid #ddd; }
+        .projects-mini-grid::-webkit-scrollbar-thumb { background:var(--ink); border-radius:4px; border:2px solid #f0f0ea; }
+        .projects-mini-grid::-webkit-scrollbar-thumb:hover { background:var(--red); }
         .project-card {
-            border: var(--border-thick);
-            background: #fff;
-            overflow: hidden;
-            transition: all 0.3s;
-            cursor: none;
-            position: relative;
-            aspect-ratio: 16/10;
-            box-shadow: 3px 3px 0 var(--ink);
+            border: var(--border-thick); background:#fff; overflow:hidden;
+            transition:all 0.3s; cursor:none; position:relative; aspect-ratio:16/10;
+            box-shadow:3px 3px 0 var(--ink);
         }
-        .project-card:hover {
-            transform: scale(1.04);
-            z-index: 10;
-            box-shadow: 6px 6px 0 var(--red);
-        }
-        .project-card .card-media {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-        }
+        .project-card:hover { transform:scale(1.04); z-index:10; box-shadow:6px 6px 0 var(--red); }
+        .project-card .card-media { width:100%; height:100%; position:relative; overflow:hidden; }
         .project-card .card-media iframe,
         .project-card .card-media video,
-        .project-card .card-media img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border: none;
-            transition: transform 0.4s;
-            filter: contrast(1.05) saturate(1.1);
-        }
+        .project-card .card-media img { width:100%; height:100%; object-fit:cover; border:none; transition:transform 0.4s; filter:contrast(1.05) saturate(1.1); }
         .project-card:hover .card-media iframe,
         .project-card:hover .card-media video,
-        .project-card:hover .card-media img {
-            transform: scale(1.08);
-        }
+        .project-card:hover .card-media img { transform:scale(1.08); }
         .project-card .card-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 50%);
+            position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
+            display:flex; flex-direction:column; justify-content:flex-end; padding:10px; z-index:2; pointer-events:none;
+        }
+        .project-card .card-cat { font-family:var(--font-mono); font-size:0.48rem; font-weight:700; letter-spacing:0.1em; color:var(--yellow); text-transform:uppercase; }
+        .project-card .card-title { font-family:var(--font-comic); font-size:0.95rem; font-weight:400; color:#fff; letter-spacing:0.01em; }
+        .project-card .pow-badge {
+            position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(0);
+            z-index:3; pointer-events:none; transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            background:var(--yellow); border:3px solid var(--ink); padding:6px 12px;
+            font-family:var(--font-comic); font-size:0.9rem; color:var(--ink); box-shadow:3px 3px 0 var(--ink);
+        }
+        .project-card:hover .pow-badge { transform:translate(-50%,-50%) scale(1); }
+        .no-projects-msg { grid-column:1/-1; text-align:center; padding:50px 20px; border:2px dashed var(--ink); color:#999; font-family:var(--font-mono); font-size:0.7rem; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:150px; }
+
+        /* ----- STATS ----- */
+        .stats-mini { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+        .stat-box {
+            border:var(--border-thick); background:#fff; padding:7px 5px; text-align:center;
+            transition:all 0.3s; display:flex; flex-direction:column; align-items:center; justify-content:center;
+            min-height:50px; box-shadow:2px 2px 0 var(--ink);
+        }
+        .stat-box:hover { background:var(--yellow); transform:scale(1.04); box-shadow:4px 4px 0 var(--ink); }
+        .stat-box.primary { grid-column:span 2; background:var(--red); box-shadow:4px 4px 0 var(--ink); min-height:60px; }
+        .stat-box.primary:hover { background:var(--pop); }
+        .stat-box .stat-val { font-family:var(--font-comic); font-size:clamp(0.65rem,1.4vw,0.9rem); font-weight:400; color:var(--ink); text-transform:uppercase; line-height:1.1; letter-spacing:0.01em; }
+        .stat-box.primary .stat-val { color:#fff; font-size:clamp(0.9rem,2vw,1.3rem); }
+        .stat-box .stat-sub { font-family:var(--font-mono); font-size:0.42rem; font-weight:700; letter-spacing:0.05em; color:#888; text-transform:uppercase; margin-top:1px; }
+        .stat-box.primary .stat-sub { color:rgba(255,255,255,0.8); font-size:0.45rem; }
+
+        /* ----- EXPERIENCE ----- */
+        .exp-comic { display:flex; align-items:flex-start; gap:10px; flex-wrap:wrap; }
+        .exp-badge { font-family:var(--font-comic); font-size:1rem; color:var(--ink); text-transform:uppercase; line-height:1.1; }
+        .exp-role-tag { font-family:var(--font-mono); font-size:0.52rem; font-weight:700; color:var(--red); letter-spacing:0.04em; text-transform:uppercase; background:var(--yellow); display:inline-block; padding:1px 6px; border:1px solid var(--ink); margin:3px 0; }
+        .exp-date-tag { font-family:var(--font-mono); font-size:0.48rem; color:#999; letter-spacing:0.04em; }
+
+        /* ----- RESUME ----- */
+        .resume-comic { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .resume-btn {
+            display:inline-block; padding:10px 16px; background:var(--yellow); color:var(--ink);
+            text-decoration:none; font-family:var(--font-comic); font-size:0.75rem;
+            letter-spacing:0.02em; text-transform:uppercase; border:var(--border-thick);
+            box-shadow:4px 4px 0 var(--ink); transition:all 0.3s;
+        }
+        .resume-btn:hover { background:var(--red); color:#fff; box-shadow:6px 6px 0 var(--ink); transform:translateY(-2px); }
+        .resume-btn.empty { border-style:dashed; color:#ccc; background:#fff; pointer-events:none; border-color:#ddd; box-shadow:none; }
+
+        /* ----- CONTACT ----- */
+        .contact-comic { display:flex; flex-wrap:wrap; gap:6px; }
+        .contact-chip {
+            display:inline-flex; align-items:center; gap:4px; padding:6px 10px;
+            background:#fff; border:2px solid var(--ink); color:var(--ink);
+            text-decoration:none; font-family:var(--font-mono); font-size:0.5rem;
+            font-weight:700; letter-spacing:0.04em; transition:all 0.3s;
+            text-transform:uppercase; box-shadow:2px 2px 0 var(--ink);
+        }
+        .contact-chip:hover { background:var(--ink); color:#fff; transform:translateY(-2px); box-shadow:4px 4px 0 var(--red); }
+
+        /* ========== REVIEWS SECTION ========== */
+        .reviews-container {
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
-            padding: 10px;
-            z-index: 2;
-            pointer-events: none;
+            gap: 12px;
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 6px;
+            margin-top: 4px;
         }
-        .project-card .card-cat {
-            font-family: var(--font-mono);
-            font-size: 0.48rem;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            color: var(--yellow);
-            text-transform: uppercase;
+        .reviews-container::-webkit-scrollbar { width: 8px; }
+        .reviews-container::-webkit-scrollbar-track { background: #f0f0ea; border-radius: 4px; border: 1px solid #ddd; }
+        .reviews-container::-webkit-scrollbar-thumb { background: var(--ink); border-radius: 4px; border: 2px solid #f0f0ea; }
+        .reviews-container::-webkit-scrollbar-thumb:hover { background: var(--red); }
+
+        .review-card {
+            background: #fff;
+            border: var(--border-thin);
+            padding: 12px 14px;
+            box-shadow: 2px 2px 0 var(--ink);
+            transition: all 0.2s;
+            border-radius: 4px;
         }
-        .project-card .card-title {
-            font-family: var(--font-comic);
-            font-size: 0.95rem;
-            font-weight: 400;
-            color: #fff;
-            letter-spacing: 0.01em;
-        }
-        .project-card .pow-badge {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            z-index: 3;
-            pointer-events: none;
-            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-            background: var(--yellow);
-            border: 3px solid var(--ink);
-            padding: 6px 12px;
-            font-family: var(--font-comic);
-            font-size: 0.9rem;
+        .review-card:hover { background: var(--paper); box-shadow: 4px 4px 0 var(--red); }
+        .review-card .review-text {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            line-height: 1.4;
             color: var(--ink);
-            box-shadow: 3px 3px 0 var(--ink);
+            margin-bottom: 4px;
+            font-weight: 400;
         }
-        .project-card:hover .pow-badge {
-            transform: translate(-50%, -50%) scale(1);
-        }
-        .no-projects-msg {
-            grid-column: 1/-1;
-            text-align: center;
-            padding: 50px 20px;
-            border: 2px dashed var(--ink);
-            color: #999;
+        .review-card .review-author {
             font-family: var(--font-mono);
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--red);
+        }
+        .review-card .review-date {
+            font-family: var(--font-mono);
+            font-size: 0.45rem;
+            color: #999;
+            margin-left: 8px;
+        }
+
+        .review-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px dashed rgba(0,0,0,0.15);
+            align-items: flex-end;
+        }
+        .review-form input {
+            flex: 1 1 160px;
+            padding: 6px 8px;
+            border: var(--border-thin);
+            font-family: var(--font-body);
             font-size: 0.7rem;
             background: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 150px;
+            outline: none;
+            min-width: 100px;
         }
-
-        .stats-mini {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-        }
-        .stat-box {
-            border: var(--border-thick);
-            background: #fff;
-            padding: 7px 5px;
-            text-align: center;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 50px;
+        .review-form input:focus { border-color: var(--red); box-shadow: 2px 2px 0 var(--red); }
+        .review-form button {
+            padding: 6px 14px;
+            background: var(--yellow);
+            border: var(--border-thin);
+            font-family: var(--font-comic);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--ink);
             box-shadow: 2px 2px 0 var(--ink);
+            transition: all 0.2s;
+            cursor: pointer;
+            flex-shrink: 0;
         }
-        .stat-box:hover {
-            background: var(--yellow);
-            transform: scale(1.04);
-            box-shadow: 4px 4px 0 var(--ink);
-        }
-        .stat-box.primary {
-            grid-column: span 2;
-            background: var(--red);
-            box-shadow: 4px 4px 0 var(--ink);
-            min-height: 60px;
-        }
-        .stat-box.primary:hover {
-            background: var(--pop);
-        }
-        .stat-box .stat-val {
-            font-family: var(--font-comic);
-            font-size: clamp(0.65rem, 1.4vw, 0.9rem);
-            font-weight: 400;
-            color: var(--ink);
-            text-transform: uppercase;
-            line-height: 1.1;
-            letter-spacing: 0.01em;
-        }
-        .stat-box.primary .stat-val {
-            color: #fff;
-            font-size: clamp(0.9rem, 2vw, 1.3rem);
-        }
-        .stat-box .stat-sub {
-            font-family: var(--font-mono);
-            font-size: 0.42rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            color: #888;
-            text-transform: uppercase;
-            margin-top: 1px;
-        }
-        .stat-box.primary .stat-sub {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.45rem;
-        }
-
-        .exp-comic {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-        .exp-badge {
-            font-family: var(--font-comic);
-            font-size: 1rem;
-            color: var(--ink);
-            text-transform: uppercase;
-            line-height: 1.1;
-        }
-        .exp-role-tag {
-            font-family: var(--font-mono);
-            font-size: 0.52rem;
-            font-weight: 700;
-            color: var(--red);
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            background: var(--yellow);
-            display: inline-block;
-            padding: 1px 6px;
-            border: 1px solid var(--ink);
-            margin: 3px 0;
-        }
-        .exp-date-tag {
-            font-family: var(--font-mono);
-            font-size: 0.48rem;
-            color: #999;
-            letter-spacing: 0.04em;
-        }
-
-        .resume-comic {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .resume-btn {
-            display: inline-block;
-            padding: 10px 16px;
-            background: var(--yellow);
-            color: var(--ink);
-            text-decoration: none;
-            font-family: var(--font-comic);
-            font-size: 0.75rem;
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-            border: var(--border-thick);
-            box-shadow: 4px 4px 0 var(--ink);
-            transition: all 0.3s;
-        }
-        .resume-btn:hover {
-            background: var(--red);
-            color: #fff;
-            box-shadow: 6px 6px 0 var(--ink);
-            transform: translateY(-2px);
-        }
-        .resume-btn.empty {
-            border-style: dashed;
-            color: #ccc;
-            background: #fff;
-            pointer-events: none;
-            border-color: #ddd;
-            box-shadow: none;
-        }
-
-        .contact-comic {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .contact-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 6px 10px;
-            background: #fff;
-            border: 2px solid var(--ink);
-            color: var(--ink);
-            text-decoration: none;
-            font-family: var(--font-mono);
-            font-size: 0.5rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            box-shadow: 2px 2px 0 var(--ink);
-        }
-        .contact-chip:hover {
-            background: var(--ink);
-            color: #fff;
-            transform: translateY(-2px);
-            box-shadow: 4px 4px 0 var(--red);
-        }
-
-        .footer-comic {
+        .review-form button:hover { background: var(--red); color: #fff; box-shadow: 4px 4px 0 var(--ink); transform: translateY(-2px); }
+        .review-empty {
             text-align: center;
-            padding: 14px;
+            padding: 20px 10px;
             font-family: var(--font-mono);
-            font-size: 0.48rem;
-            font-weight: 700;
-            letter-spacing: 0.15em;
+            font-size: 0.6rem;
             color: #bbb;
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
-            border-top: var(--border-thick);
-            margin: 16px auto;
-            max-width: 1100px;
-            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* ----- FOOTER ----- */
+        .footer-comic {
+            text-align:center; padding:14px; font-family:var(--font-mono); font-size:0.48rem;
+            font-weight:700; letter-spacing:0.15em; color:#bbb; text-transform:uppercase;
+            border-top:var(--border-thick); margin:16px auto; max-width:1100px;
+            background:rgba(255,255,255,0.9);
         }
 
         .action-word {
-            position: absolute;
-            font-family: var(--font-comic);
-            font-size: 1.2rem;
-            color: var(--pop);
-            pointer-events: none;
-            z-index: 5;
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position:absolute; font-family:var(--font-comic); font-size:1.2rem;
+            color:var(--pop); pointer-events:none; z-index:5; opacity:0;
+            transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
         }
-        .comic-panel:hover .action-word {
-            opacity: 1;
-            transform: scale(1.1);
-        }
+        .comic-panel:hover .action-word { opacity:1; transform:scale(1.1); }
 
-        .reveal {
-            opacity: 0;
-            transform: translateY(15px);
-            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-        }
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .reveal { opacity:0; transform:translateY(15px); transition:opacity 0.4s ease-out, transform 0.4s ease-out; }
+        .reveal.visible { opacity:1; transform:translateY(0); }
 
+        /* ----- ADMIN OVERLAY ----- */
         .admin-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 10001;
-            background: rgba(255, 255, 255, 0.95);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-            cursor: auto;
+            position:fixed; inset:0; z-index:10001; background:rgba(255,255,255,0.95);
+            display:flex; align-items:center; justify-content:center; opacity:0;
+            pointer-events:none; transition:opacity 0.3s; cursor:auto;
         }
-        .admin-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .admin-overlay.active { opacity:1; pointer-events:auto; }
         .admin-panel {
-            background: #fff;
-            border: var(--border-thick);
-            padding: 22px;
-            max-width: 560px;
-            width: 92%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 8px 8px 0 var(--ink);
-            font-family: var(--font-mono);
-            font-size: 0.65rem;
+            background:#fff; border:var(--border-thick); padding:22px;
+            max-width:560px; width:92%; max-height:85vh; overflow-y:auto;
+            box-shadow:8px 8px 0 var(--ink); font-family:var(--font-mono); font-size:0.65rem;
         }
-        .admin-panel h3 {
-            font-family: var(--font-comic);
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-        .admin-panel input {
-            width: 100%;
-            padding: 6px 8px;
-            margin: 3px 0;
-            border: var(--border-thin);
-            font-family: var(--font-mono);
-            font-size: 0.6rem;
-            outline: none;
-            background: #fff;
-        }
-        .admin-panel input:focus {
-            border-color: var(--red);
-            box-shadow: 3px 3px 0 var(--red);
-        }
-        .admin-btn-row {
-            display: flex;
-            gap: 5px;
-            margin-top: 8px;
-            flex-wrap: wrap;
-        }
+        .admin-panel h3 { font-family:var(--font-comic); font-size:1.2rem; margin-bottom:10px; text-transform:uppercase; }
+        .admin-panel input { width:100%; padding:6px 8px; margin:3px 0; border:var(--border-thin); font-family:var(--font-mono); font-size:0.6rem; outline:none; background:#fff; }
+        .admin-panel input:focus { border-color:var(--red); box-shadow:3px 3px 0 var(--red); }
+        .admin-btn-row { display:flex; gap:5px; margin-top:8px; flex-wrap:wrap; }
         .admin-btn {
-            padding: 5px 10px;
-            border: var(--border-thin);
-            background: #fff;
-            cursor: pointer;
-            font-family: var(--font-mono);
-            font-size: 0.55rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            transition: all 0.3s;
-            box-shadow: 2px 2px 0 var(--ink);
+            padding:5px 10px; border:var(--border-thin); background:#fff; cursor:pointer;
+            font-family:var(--font-mono); font-size:0.55rem; font-weight:700;
+            letter-spacing:0.05em; text-transform:uppercase; transition:all 0.3s;
+            box-shadow:2px 2px 0 var(--ink);
         }
-        .admin-btn:hover {
-            background: var(--ink);
-            color: #fff;
-            box-shadow: 4px 4px 0 var(--red);
-        }
-        .admin-btn.primary {
-            background: var(--yellow);
-            color: var(--ink);
-        }
-        .admin-btn.primary:hover {
-            background: var(--red);
-            color: #fff;
-        }
-        .admin-video-list {
-            max-height: 130px;
-            overflow-y: auto;
-            margin-top: 3px;
-        }
-        .admin-video-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 3px 6px;
-            border: 1px solid #eee;
-            margin: 2px 0;
-            font-size: 0.55rem;
-            background: #fafafa;
-        }
+        .admin-btn:hover { background:var(--ink); color:#fff; box-shadow:4px 4px 0 var(--red); }
+        .admin-btn.primary { background:var(--yellow); color:var(--ink); }
+        .admin-btn.primary:hover { background:var(--red); color:#fff; }
+        .admin-video-list { max-height:130px; overflow-y:auto; margin-top:3px; }
+        .admin-video-item { display:flex; justify-content:space-between; align-items:center; padding:3px 6px; border:1px solid #eee; margin:2px 0; font-size:0.55rem; background:#fafafa; }
 
+        /* ----- RESPONSIVE ----- */
         @media (max-width: 768px) {
-            .comic-page {
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-                padding: 10px 8px;
-            }
-            .panel-hero {
-                grid-column: span 2;
-            }
-            .panel-projects {
-                grid-column: span 2;
-            }
-            .panel-stats {
-                grid-column: span 2;
-            }
-            .panel-experience {
-                grid-column: span 2;
-            }
-            .panel-resume {
-                grid-column: span 2;
-            }
-            .panel-contact {
-                grid-column: span 2;
-            }
-            .projects-mini-grid {
-                grid-template-columns: 1fr;
-                max-height: 500px;
-            }
-            .stats-mini {
-                grid-template-columns: 1fr 1fr;
-            }
-            .hero-comic {
-                flex-direction: column;
-                text-align: center;
-            }
-            .hero-info .name-comic .nc2 {
-                margin-left: 0;
-            }
-            .profile-comic-frame {
-                width: 120px;
-                height: 120px;
-            }
-            .speech-float {
-                right: -20px;
-                top: -20px;
-            }
-            .cursor-ink,
-            .cursor-splat {
-                display: none;
-            }
-            body {
-                cursor: auto;
-            }
-            .music-toggle {
-                bottom: 10px;
-                left: 10px;
-                padding: 6px 9px;
-                font-size: 0.6rem;
-            }
-            .comic-panel {
-                box-shadow: 3px 3px 0 var(--ink);
-            }
+            .comic-page { grid-template-columns:1fr 1fr; gap:8px; padding:10px 8px; }
+            .panel-hero, .panel-projects, .panel-stats, .panel-experience, .panel-resume, .panel-contact, .panel-reviews { grid-column:span 2; }
+            .projects-mini-grid { grid-template-columns:1fr; max-height:500px; }
+            .stats-mini { grid-template-columns:1fr 1fr; }
+            .hero-comic { flex-direction:column; text-align:center; }
+            .hero-info .name-comic .nc2 { margin-left:0; }
+            .profile-comic-frame { width:120px; height:120px; }
+            .speech-float { right:-20px; top:-20px; }
+            .cursor-ink, .cursor-splat { display:none; }
+            body { cursor:auto; }
+            .music-toggle { bottom:10px; left:10px; padding:6px 9px; font-size:0.6rem; }
+            .comic-panel { box-shadow:3px 3px 0 var(--ink); }
+            .review-form input { flex:1 1 100%; }
         }
     </style>
 </head>
 <body>
 
+    <!-- BACKGROUND LAYERS -->
     <div class="comic-bg-layer">
         <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
             <circle cx="100" cy="100" r="40" fill="none" stroke="#000" stroke-width="6" opacity="0.3"/>
@@ -948,6 +446,7 @@
     </div>
     <div class="dot-overlay"></div>
 
+    <!-- INTRO CUTSCENE -->
     <div class="intro-cutscene">
         <div class="intro-panel">
             <div class="intro-name">ADITYA</div>
@@ -956,25 +455,31 @@
         </div>
     </div>
 
+    <!-- AUDIO -->
     <audio id="bgMusic" loop preload="auto">
         <source src="audio/bgm.mp3" type="audio/mpeg">
     </audio>
 
+    <!-- MUSIC TOGGLE -->
     <button class="music-toggle muted" id="musicToggle">
         <span class="sound-icon">🔊</span>
         <span class="equalizer"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></span>
         <span id="musicLabel">OFF</span>
     </button>
 
+    <!-- CURSORS -->
     <div class="cursors-layer">
         <div class="cursor-ink" id="cursorInk"></div>
         <div class="cursor-splat" id="cursorSplat"></div>
     </div>
 
+    <!-- ADMIN OVERLAY -->
     <div class="admin-overlay" id="adminOverlay"><div class="admin-panel" id="adminPanel"></div></div>
 
+    <!-- ====== MAIN COMIC PAGE ====== -->
     <div class="comic-page">
 
+        <!-- HERO -->
         <div class="comic-panel panel-hero reveal">
             <div class="action-word" style="top:8px;right:20px;">POW!</div>
             <span class="panel-label">ISSUE #1</span>
@@ -999,6 +504,7 @@
             </div>
         </div>
 
+        <!-- PROJECTS -->
         <div class="comic-panel panel-projects reveal">
             <div class="action-word" style="top:8px;right:16px;">BAM!</div>
             <span class="panel-label">PROJECTS</span>
@@ -1009,14 +515,12 @@
             </div>
         </div>
 
+        <!-- STATS -->
         <div class="comic-panel panel-stats reveal">
             <div class="action-word" style="top:8px;right:16px;">ZAP!</div>
             <span class="panel-label">STATS</span>
             <div class="stats-mini">
-                <div class="stat-box primary">
-                    <div class="stat-val">🎮 GAMING</div>
-                    <div class="stat-sub">★ PRIMARY SPECIALIZATION</div>
-                </div>
+                <div class="stat-box primary"><div class="stat-val">🎮 GAMING</div><div class="stat-sub">★ PRIMARY SPECIALIZATION</div></div>
                 <div class="stat-box"><div class="stat-val">CORP</div><div class="stat-sub">PRECISION</div></div>
                 <div class="stat-box"><div class="stat-val">TALK HEAD</div><div class="stat-sub">FLOW</div></div>
                 <div class="stat-box"><div class="stat-val">REELS</div><div class="stat-sub">FAST</div></div>
@@ -1027,6 +531,7 @@
             </div>
         </div>
 
+        <!-- EXPERIENCE -->
         <div class="comic-panel panel-experience reveal">
             <div class="action-word" style="top:8px;right:16px;">WHAM!</div>
             <span class="panel-label">EXPERIENCE</span>
@@ -1044,6 +549,7 @@
             </div>
         </div>
 
+        <!-- RESUME -->
         <div class="comic-panel panel-resume reveal">
             <div class="action-word" style="top:8px;right:16px;">ZOOM!</div>
             <span class="panel-label">RESUME</span>
@@ -1052,6 +558,7 @@
             </div>
         </div>
 
+        <!-- CONTACT -->
         <div class="comic-panel panel-contact reveal">
             <div class="action-word" style="top:8px;right:16px;">KAPOW!</div>
             <span class="panel-label">CONTACT</span>
@@ -1063,243 +570,403 @@
             </div>
         </div>
 
+        <!-- ====== REVIEWS PANEL with GitHub Issues backend ====== -->
+        <div class="comic-panel panel-reviews reveal">
+            <div class="action-word" style="top:8px;right:16px;">⭐</div>
+            <span class="panel-label">REVIEWS</span>
+            <div id="reviewsContainer" class="reviews-container">
+                <div class="review-empty">⏳ Loading reviews...</div>
+            </div>
+            <div class="review-form">
+                <input type="text" id="reviewNameInput" placeholder="YOUR NAME" maxlength="40">
+                <input type="text" id="reviewTextInput" placeholder="YOUR REVIEW" maxlength="200">
+                <button id="reviewSubmitBtn">ADD REVIEW</button>
+            </div>
+            <div style="font-size:0.45rem; font-family:var(--font-mono); color:#999; margin-top:6px; text-align:right;">
+                💬 Reviews powered by GitHub Issues
+            </div>
+        </div>
+
     </div>
 
+    <!-- FOOTER -->
     <div class="footer-comic">© 2026 ADITYA SHRIVASTAVA — DRAWN AT 120FPS ★ THE END ★</div>
 
+    <!-- ============================================================ -->
+    <!-- SCRIPT — GitHub Issues as database for reviews                -->
+    <!-- ============================================================ -->
     <script>
-        const ADMIN_PASSWORD = 'aditya2026';
-        let isAdmin = false;
-        let videos = [];
-        let resumeLink = 'https://drive.google.com/file/d/1Px9AxUvZ7EXKTr_dNLbqaRBP6ujvHLap/view?usp=drive_link';
-        let profilePhotoData = null;
-        let musicPlaying = false;
-        let audioUnlocked = false;
+        (function(){
+            "use strict";
 
-        const adminOverlay = document.getElementById('adminOverlay');
-        const adminPanel = document.getElementById('adminPanel');
-        const projectsGrid = document.getElementById('projectsGrid');
-        const noProjectsMsg = document.getElementById('noProjectsMsg');
-        const resumeBtn = document.getElementById('resumeBtn');
-        const profileImg = document.getElementById('profileImg');
-        const profileWrap = document.getElementById('profileWrap');
-        const cursorInk = document.getElementById('cursorInk');
-        const cursorSplat = document.getElementById('cursorSplat');
-        const bgMusic = document.getElementById('bgMusic');
-        const musicToggle = document.getElementById('musicToggle');
-        const musicLabel = document.getElementById('musicLabel');
+            // ----- CONFIGURATION (EDIT THESE) -----
+            // Replace with your GitHub repo details
+            const GITHUB_REPO = 'adityas-portfolio/reviews';  // e.g. 'username/repo'
+            const GITHUB_TOKEN = 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN'; // Needs 'repo' scope for private, or 'public_repo' for public
+            const LABEL = 'review'; // label used for review issues
 
-        // ═══════════════════════════════════
-        // 📌 YOUR PERMANENT VIDEOS
-        // Supports: YouTube, Vimeo, Google Drive, direct MP4
-        // ═══════════════════════════════════
-        const DEFAULT_VIDEOS = [
-            { url: 'https://drive.google.com/file/d/1O6hg8iJsYfxWldYQR1Fmp5Wkhj04tlqd/view?usp=sharing', title: 'GPU Ad', category: 'Advertisement', thumbnail: 'thumbnails/Nvidia-thumbnail.png' },
-            { url: 'https://drive.google.com/file/d/1Dyqpuc0ycnGxiONjuijf0PPiKeufqj57/view?usp=drive_link', title: 'Hotel Ad', category: 'Advertisement', thumbnail: 'thumbnails/hotel-thumbnail.png' },
-            { url: 'https://drive.google.com/file/d/1xjHpimWsdIcZ_lTZiGYNQJsYPY1dUYCj/view?usp=drive_link', title: 'Corporate edit', category: 'Corporate', thumbnail: 'thumbnails/corporate-thumbnail.png' },
-            { url: 'https://drive.google.com/file/d/1b1BYhhgIq_DOOMRsSonHxIPEcrde_A24/view?usp=drive_link', title: 'Horror edit', category: 'Horror', thumbnail: 'thumbnails/horror-thumbnail.png' },
-            { url: 'https://drive.google.com/file/d/1X0cui2U6wdF7a6_ZZ1Xx-5UlO6GAnkpE/view?usp=drive_link', title: 'Anime edit', category: 'Cinema', thumbnail: 'thumbnails/anime-thumbnail.png' },
-            { url: 'https://drive.google.com/file/d/1MH9knway_YsIJA2hPy4mGYgfrQ8pbINe/view?usp=drive_link', title: 'Gaming edit', category: 'Gaming', thumbnail: 'thumbnails/gaming-thumbnail.png' },
-            { url: 'https://drive.google.com/file/d/1yH7Jv0g3NKOokhmPybTF0bdA1kd_6JO4/view?usp=drive_link', title: 'Talking head edit', category: 'Talking head', thumbnail: 'thumbnails/tariffs-thumbnail.png' }
-        ];
+            // ----- OTHER CONFIG -----
+            const ADMIN_PASSWORD = 'aditya2026';
+            const STORAGE_KEY = 'aditya_comic_v10';
 
-        bgMusic.volume = 0.5;
-        function unlockAudio() {
-            if (audioUnlocked) return;
-            const AC = window.AudioContext || window.webkitAudioContext;
-            if (AC) { const ctx = new AC(); const buf = ctx.createBuffer(1, 1, 22050); const src = ctx.createBufferSource();
-                src.buffer = buf;
-                src.connect(ctx.destination);
-                src.start(0); }
-            bgMusic.play().then(() => { audioUnlocked = true;
-                musicPlaying = true;
-                musicToggle.classList.remove('muted');
-                musicLabel.textContent = 'ON'; }).catch(() => {});
-        }
-        function toggleMusic(e) { e.stopPropagation();
-            e.preventDefault(); if (!audioUnlocked) { unlockAudio(); return; } if (musicPlaying) { bgMusic.pause();
-                musicPlaying = false;
-                musicToggle.classList.add('muted');
-                musicLabel.textContent = 'OFF'; } else { bgMusic.play().then(() => { musicPlaying = true;
-                    musicToggle.classList.remove('muted');
-                    musicLabel.textContent = 'ON'; }).catch(() => {}); } }
-        musicToggle.addEventListener('click', toggleMusic);
-        document.addEventListener('click', () => { if (!audioUnlocked) unlockAudio(); });
-        document.addEventListener('keydown', () => { if (!audioUnlocked) unlockAudio(); });
+            // ----- STATE -----
+            let isAdmin = false;
+            let videos = [];
+            let resumeLink = 'https://drive.google.com/file/d/1Px9AxUvZ7EXKTr_dNLbqaRBP6ujvHLap/view?usp=drive_link';
+            let profilePhotoData = null;
+            let musicPlaying = false;
+            let audioUnlocked = false;
+            let reviews = []; // cached reviews
 
-        let mx = 0,
-            my = 0,
-            sx = 0,
-            sy = 0;
-        document.addEventListener('mousemove', e => { mx = e.clientX;
-            my = e.clientY;
-            cursorInk.style.left = mx + 'px';
-            cursorInk.style.top = my + 'px'; });
-        function animCursors() { sx += (mx - sx) * 0.1;
-            sy += (my - sy) * 0.1;
-            cursorSplat.style.left = sx + 'px';
-            cursorSplat.style.top = sy + 'px';
-            requestAnimationFrame(animCursors); }
-        animCursors();
+            // ----- DOM REFS -----
+            const adminOverlay = document.getElementById('adminOverlay');
+            const adminPanel = document.getElementById('adminPanel');
+            const projectsGrid = document.getElementById('projectsGrid');
+            const noProjectsMsg = document.getElementById('noProjectsMsg');
+            const resumeBtn = document.getElementById('resumeBtn');
+            const profileImg = document.getElementById('profileImg');
+            const cursorInk = document.getElementById('cursorInk');
+            const cursorSplat = document.getElementById('cursorSplat');
+            const bgMusic = document.getElementById('bgMusic');
+            const musicToggle = document.getElementById('musicToggle');
+            const musicLabel = document.getElementById('musicLabel');
+            const reviewsContainer = document.getElementById('reviewsContainer');
+            const reviewNameInput = document.getElementById('reviewNameInput');
+            const reviewTextInput = document.getElementById('reviewTextInput');
+            const reviewSubmitBtn = document.getElementById('reviewSubmitBtn');
 
-        function loadState() {
-            try { const s = JSON.parse(localStorage.getItem('aditya_comic_v9')); if (s && s.videos && s.videos.length >
-                    0) { videos = s.videos;
-                    resumeLink = s.resumeLink || resumeLink;
-                    profilePhotoData = s.profilePhotoData || null; } else { videos = [...DEFAULT_VIDEOS]; } } catch (e) { videos =
-                    [...DEFAULT_VIDEOS]; }
-            if (!Array.isArray(videos)) videos = [...DEFAULT_VIDEOS];
-        }
-        function saveState() { localStorage.setItem('aditya_comic_v9', JSON.stringify({ videos, resumeLink,
-                profilePhotoData })); }
-        function applyState() {
-            if (profilePhotoData && profileImg) { profileImg.src = profilePhotoData;
-                profileImg.style.display = 'block'; }
-            if (resumeLink && resumeBtn) { resumeBtn.href = resumeLink;
-                resumeBtn.classList.remove('empty');
-                resumeBtn.style.pointerEvents = 'auto'; }
-            renderProjects();
-        }
+            // ----- DEFAULT VIDEOS -----
+            const DEFAULT_VIDEOS = [
+                { url: 'https://drive.google.com/file/d/1O6hg8iJsYfxWldYQR1Fmp5Wkhj04tlqd/view?usp=sharing', title: 'GPU Ad', category: 'Advertisement', thumbnail: 'thumbnails/Nvidia-thumbnail.png' },
+                { url: 'https://drive.google.com/file/d/1Dyqpuc0ycnGxiONjuijf0PPiKeufqj57/view?usp=drive_link', title: 'Hotel Ad', category: 'Advertisement', thumbnail: 'thumbnails/hotel-thumbnail.png' },
+                { url: 'https://drive.google.com/file/d/1xjHpimWsdIcZ_lTZiGYNQJsYPY1dUYCj/view?usp=drive_link', title: 'Corporate edit', category: 'Corporate', thumbnail: 'thumbnails/corporate-thumbnail.png' },
+                { url: 'https://drive.google.com/file/d/1b1BYhhgIq_DOOMRsSonHxIPEcrde_A24/view?usp=drive_link', title: 'Horror edit', category: 'Horror', thumbnail: 'thumbnails/horror-thumbnail.png' },
+                { url: 'https://drive.google.com/file/d/1X0cui2U6wdF7a6_ZZ1Xx-5UlO6GAnkpE/view?usp=drive_link', title: 'Anime edit', category: 'Cinema', thumbnail: 'thumbnails/anime-thumbnail.png' },
+                { url: 'https://drive.google.com/file/d/1MH9knway_YsIJA2hPy4mGYgfrQ8pbINe/view?usp=drive_link', title: 'Gaming edit', category: 'Gaming', thumbnail: 'thumbnails/gaming-thumbnail.png' },
+                { url: 'https://drive.google.com/file/d/1yH7Jv0g3NKOokhmPybTF0bdA1kd_6JO4/view?usp=drive_link', title: 'Talking head edit', category: 'Talking head', thumbnail: 'thumbnails/tariffs-thumbnail.png' }
+            ];
 
-        // ── FIXED RENDER WITH GOOGLE DRIVE SUPPORT ──
-        function renderProjects() {
-            const ex = projectsGrid.querySelectorAll('.project-card');
-            ex.forEach(c => c.remove());
-            if (!videos || videos.length === 0) { noProjectsMsg.style.display = 'flex'; return; }
-            noProjectsMsg.style.display = 'none';
-            videos.forEach((v, i) => {
-                const url = v.url || '';
-                const title = v.title || 'Untitled';
-                const category = v.category || 'GENERAL';
-                const hasCustomThumb = v.thumbnail && v.thumbnail.trim() !== '';
-                const isYT = url.includes('youtube.com') || url.includes('youtu.be');
-                const isVim = url.includes('vimeo.com');
-                const isDrive = url.includes('drive.google.com');
-                let media = '';
-                let embedUrl = url;
-
-                // Convert Google Drive links to embeddable format
-                if (isDrive) {
-                    const driveMatch = url.match(/\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
-                    if (driveMatch && driveMatch[1]) {
-                        embedUrl = 'https://drive.google.com/file/d/' + driveMatch[1] + '/preview';
-                    }
-                }
-
-                // PRIORITY 1: Custom thumbnail
-                if (hasCustomThumb) {
-                    media = `<img src="${esc(v.thumbnail)}" alt="${esc(title)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;position:relative;z-index:1;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">`;
-                    const cols = ['#e63946', '#1d3557', '#ffd60a', '#f72585', '#00b4d8', '#e76f51'];
-                    media += `<div style="display:none;width:100%;height:100%;background:${cols[i%cols.length]};align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:0.9rem;color:#fff;text-align:center;padding:8px;position:absolute;top:0;left:0;z-index:0;">${esc(title)}</div>`;
-                }
-                // PRIORITY 2: YouTube embed
-                else if (isYT) {
-                    const id = (url.match(/(?:youtu\.be\/|v\/|embed\/|watch\?v=|\&v=)([^#\&\?]*)/) || [])[1];
-                    if (id) media = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=0&mute=1&controls=0&modestbranding=1&rel=0" loading="lazy" allowfullscreen style="pointer-events:none;width:100%;height:100%;border:none;"></iframe>`;
-                }
-                // PRIORITY 3: Vimeo embed
-                else if (isVim) {
-                    const id = (url.match(/vimeo\.com\/(\d+)/) || [])[1];
-                    if (id) media = `<iframe src="https://player.vimeo.com/video/${id}?autoplay=0&muted=1&controls=0&title=0&byline=0" loading="lazy" allowfullscreen style="pointer-events:none;width:100%;height:100%;border:none;"></iframe>`;
-                }
-                // PRIORITY 4: Google Drive embed
-                else if (isDrive) {
-                    media = `<iframe src="${embedUrl}" loading="lazy" allowfullscreen style="pointer-events:none;width:100%;height:100%;border:none;"></iframe>`;
-                }
-                // PRIORITY 5: Direct video/fallback
-                if (!media) {
-                    const cols = ['#e63946', '#1d3557', '#ffd60a', '#f72585', '#00b4d8', '#e76f51'];
-                    media = `<div style="width:100%;height:100%;background:${cols[i%cols.length]};display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:0.9rem;color:#fff;text-align:center;padding:8px;">${esc(title)}</div>`;
-                }
-
-                const card = document.createElement('div');
-                card.classList.add('project-card');
-                card.innerHTML = `
-                    <div class="card-media">${media}</div>
-                    <div class="card-overlay"><div class="card-cat">${esc(category)}</div><div class="card-title">${esc(title)}</div></div>
-                    <div class="pow-badge">▶ PLAY</div>`;
-                card.querySelector('.card-media').addEventListener('click', () => window.open(embedUrl, '_blank'));
-                projectsGrid.appendChild(card);
-            });
-        }
-        function esc(s) { const d = document.createElement('div');
-            d.textContent = s; return d.innerHTML; }
-
-        function renderAdminPanel() {
-            if (!isAdmin) {
-                adminPanel.innerHTML = `
-                    <div style="text-align:center;padding:16px;"><h3>🔒 SECRET ORIGIN</h3>
-                    <input type="password" id="adminPW" placeholder="PASSWORD" style="text-align:center;font-size:0.9rem;letter-spacing:0.2em;">
-                    <div class="admin-btn-row" style="justify-content:center;"><button class="admin-btn primary" id="adminLoginBtn">UNLOCK</button><button class="admin-btn" id="adminCloseBtn">CLOSE</button></div></div>`;
-                document.getElementById('adminLoginBtn').addEventListener('click', () => { if (document.getElementById(
-                        'adminPW').value === ADMIN_PASSWORD) { isAdmin = true;
-                        renderAdminPanel(); } else alert('WRONG!'); });
-                document.getElementById('adminCloseBtn').addEventListener('click', closeAdmin);
-                return;
+            // ----- MUSIC (unchanged) -----
+            bgMusic.volume = 0.5;
+            function unlockAudio() {
+                if (audioUnlocked) return;
+                const AC = window.AudioContext || window.webkitAudioContext;
+                if (AC) { const ctx = new AC(); const buf = ctx.createBuffer(1,1,22050); const src = ctx.createBufferSource();
+                    src.buffer = buf; src.connect(ctx.destination); src.start(0); }
+                bgMusic.play().then(() => { audioUnlocked = true; musicPlaying = true; musicToggle.classList.remove('muted'); musicLabel.textContent = 'ON'; }).catch(()=>{});
             }
-            const list = videos.map((v, i) =>
-                `<div class="admin-video-item"><span>${esc(v.title||'')} — ${esc(v.category||'')}</span><button class="admin-btn" data-rm="${i}" style="padding:2px 5px;">✕</button></div>`
-                ).join('') || '<div style="color:#ccc;font-size:0.55rem;">NO VIDEOS</div>';
-            adminPanel.innerHTML = `
-                <h3>🛠 ADMIN PANEL</h3>
-                <label>PROFILE PHOTO</label><input type="file" id="adminProfileUpload" accept="image/*">
-                <label>RESUME LINK</label><input type="url" id="adminResume" value="${esc(resumeLink)}">
-                <label>ADD VIDEO</label>
-                <input type="url" id="adminURL" placeholder="VIDEO URL (YouTube/Vimeo/Drive)"><input type="text" id="adminTitle" placeholder="TITLE"><input type="text" id="adminCat" placeholder="CATEGORY"><input type="url" id="adminThumb" placeholder="THUMBNAIL PATH (optional)">
-                <button class="admin-btn primary" id="adminAddBtn">+ ADD</button>
-                <label>VIDEOS (${videos.length})</label><div class="admin-video-list">${list}</div>
-                <div class="admin-btn-row"><button class="admin-btn" id="adminCloseBtn">CLOSE</button><button class="admin-btn" id="adminClearBtn" style="color:#e00;">CLEAR ALL</button><button class="admin-btn" id="adminLogoutBtn">LOGOUT</button></div>`;
-            document.getElementById('adminProfileUpload').addEventListener('change', e => { const f = e.target.files[
-                    0]; if (f && f.type.startsWith('image/')) { const r = new FileReader();
-                    r.onload = ev => { profilePhotoData = ev.target.result;
-                        profileImg.src = profilePhotoData;
-                        profileImg.style.display = 'block';
-                        saveState(); };
-                    r.readAsDataURL(f); } });
-            document.getElementById('adminResume').addEventListener('input', e => { resumeLink = e.target.value
-                    .trim();
-                resumeBtn.href = resumeLink || '#';
-                resumeBtn.classList.toggle('empty', !resumeLink);
-                saveState(); });
-            document.getElementById('adminAddBtn').addEventListener('click', () => { const u = document
-                    .getElementById('adminURL').value.trim(); const t = document.getElementById('adminTitle')
-                    .value.trim(); const c = document.getElementById('adminCat').value.trim(); const th = document
-                    .getElementById('adminThumb').value.trim(); if (!u || !t) return alert('URL + TITLE REQUIRED');
-                videos.push({ url: u, title: t, category: c || 'GENERAL', thumbnail: th });
-                saveState();
+            function toggleMusic(e) { e.stopPropagation(); e.preventDefault(); if (!audioUnlocked) { unlockAudio(); return; } if (musicPlaying) { bgMusic.pause(); musicPlaying = false; musicToggle.classList.add('muted'); musicLabel.textContent = 'OFF'; } else { bgMusic.play().then(() => { musicPlaying = true; musicToggle.classList.remove('muted'); musicLabel.textContent = 'ON'; }).catch(()=>{}); } }
+            musicToggle.addEventListener('click', toggleMusic);
+            document.addEventListener('click', ()=>{ if(!audioUnlocked) unlockAudio(); });
+            document.addEventListener('keydown', ()=>{ if(!audioUnlocked) unlockAudio(); });
+
+            // ----- CURSORS -----
+            let mx=0, my=0, sx=0, sy=0;
+            document.addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; cursorInk.style.left=mx+'px'; cursorInk.style.top=my+'px'; });
+            function animCursors(){ sx += (mx-sx)*0.1; sy += (my-sy)*0.1; cursorSplat.style.left=sx+'px'; cursorSplat.style.top=sy+'px'; requestAnimationFrame(animCursors); }
+            animCursors();
+
+            // ----- LOCAL STORAGE HELPERS (for videos, profile, resume) -----
+            function loadState() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const s = JSON.parse(raw);
+                        videos = (s.videos && s.videos.length) ? s.videos : [...DEFAULT_VIDEOS];
+                        resumeLink = s.resumeLink || resumeLink;
+                        profilePhotoData = s.profilePhotoData || null;
+                    } else {
+                        videos = [...DEFAULT_VIDEOS];
+                    }
+                } catch(e) {
+                    videos = [...DEFAULT_VIDEOS];
+                }
+                if (!Array.isArray(videos)) videos = [...DEFAULT_VIDEOS];
+            }
+
+            function saveState() {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    videos,
+                    resumeLink,
+                    profilePhotoData
+                }));
+            }
+
+            // ----- APPLY STATE (videos, profile, resume) -----
+            function applyState() {
+                if (profilePhotoData && profileImg) { profileImg.src = profilePhotoData; profileImg.style.display = 'block'; }
+                if (resumeLink && resumeBtn) { resumeBtn.href = resumeLink; resumeBtn.classList.remove('empty'); resumeBtn.style.pointerEvents = 'auto'; }
                 renderProjects();
-                renderAdminPanel(); });
-            document.getElementById('adminCloseBtn').addEventListener('click', closeAdmin);
-            document.getElementById('adminLogoutBtn').addEventListener('click', () => { isAdmin = false;
-                renderAdminPanel(); });
-            document.getElementById('adminClearBtn').addEventListener('click', () => { if (confirm('DELETE ALL?')) { videos =
-                    [];
+            }
+
+            // ----- RENDER PROJECTS (unchanged) -----
+            function renderProjects() {
+                const ex = projectsGrid.querySelectorAll('.project-card');
+                ex.forEach(c => c.remove());
+                if (!videos || videos.length === 0) { noProjectsMsg.style.display = 'flex'; return; }
+                noProjectsMsg.style.display = 'none';
+                videos.forEach((v, i) => {
+                    const url = v.url || '';
+                    const title = v.title || 'Untitled';
+                    const category = v.category || 'GENERAL';
+                    const hasCustomThumb = v.thumbnail && v.thumbnail.trim() !== '';
+                    const isYT = url.includes('youtube.com') || url.includes('youtu.be');
+                    const isVim = url.includes('vimeo.com');
+                    const isDrive = url.includes('drive.google.com');
+                    let media = '';
+                    let embedUrl = url;
+
+                    if (isDrive) {
+                        const driveMatch = url.match(/\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
+                        if (driveMatch && driveMatch[1]) { embedUrl = 'https://drive.google.com/file/d/' + driveMatch[1] + '/preview'; }
+                    }
+
+                    if (hasCustomThumb) {
+                        media = `<img src="${esc(v.thumbnail)}" alt="${esc(title)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;position:relative;z-index:1;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">`;
+                        const cols = ['#e63946','#1d3557','#ffd60a','#f72585','#00b4d8','#e76f51'];
+                        media += `<div style="display:none;width:100%;height:100%;background:${cols[i%cols.length]};align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:0.9rem;color:#fff;text-align:center;padding:8px;position:absolute;top:0;left:0;z-index:0;">${esc(title)}</div>`;
+                    } else if (isYT) {
+                        const id = (url.match(/(?:youtu\.be\/|v\/|embed\/|watch\?v=|\&v=)([^#\&\?]*)/) || [])[1];
+                        if (id) media = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=0&mute=1&controls=0&modestbranding=1&rel=0" loading="lazy" allowfullscreen style="pointer-events:none;width:100%;height:100%;border:none;"></iframe>`;
+                    } else if (isVim) {
+                        const id = (url.match(/vimeo\.com\/(\d+)/) || [])[1];
+                        if (id) media = `<iframe src="https://player.vimeo.com/video/${id}?autoplay=0&muted=1&controls=0&title=0&byline=0" loading="lazy" allowfullscreen style="pointer-events:none;width:100%;height:100%;border:none;"></iframe>`;
+                    } else if (isDrive) {
+                        media = `<iframe src="${embedUrl}" loading="lazy" allowfullscreen style="pointer-events:none;width:100%;height:100%;border:none;"></iframe>`;
+                    }
+                    if (!media) {
+                        const cols = ['#e63946','#1d3557','#ffd60a','#f72585','#00b4d8','#e76f51'];
+                        media = `<div style="width:100%;height:100%;background:${cols[i%cols.length]};display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:0.9rem;color:#fff;text-align:center;padding:8px;">${esc(title)}</div>`;
+                    }
+
+                    const card = document.createElement('div');
+                    card.classList.add('project-card');
+                    card.innerHTML = `
+                        <div class="card-media">${media}</div>
+                        <div class="card-overlay"><div class="card-cat">${esc(category)}</div><div class="card-title">${esc(title)}</div></div>
+                        <div class="pow-badge">▶ PLAY</div>`;
+                    card.querySelector('.card-media').addEventListener('click', ()=> window.open(embedUrl, '_blank'));
+                    projectsGrid.appendChild(card);
+                });
+            }
+            function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+            // ==================== GITHUB ISSUES AS DATABASE ====================
+
+            // ----- FETCH REVIEWS FROM GITHUB -----
+            async function fetchReviewsFromGitHub() {
+                try {
+                    const url = `https://api.github.com/repos/${GITHUB_REPO}/issues?labels=${LABEL}&state=all&per_page=100`;
+                    const headers = {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    };
+                    const response = await fetch(url, { headers });
+                    if (!response.ok) {
+                        throw new Error(`GitHub API error: ${response.status}`);
+                    }
+                    const issues = await response.json();
+                    // Each issue body: "Author: name\nReview: text"
+                    const parsed = issues.map(issue => {
+                        const lines = issue.body ? issue.body.split('\n') : [];
+                        let author = 'Anonymous';
+                        let text = '';
+                        for (let line of lines) {
+                            if (line.startsWith('Author:')) author = line.replace('Author:', '').trim();
+                            if (line.startsWith('Review:')) text = line.replace('Review:', '').trim();
+                        }
+                        const date = issue.created_at ? new Date(issue.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '';
+                        return { author, text, date, id: issue.id };
+                    }).filter(r => r.text && r.text.length > 0);
+                    return parsed;
+                } catch (err) {
+                    console.warn('Failed to fetch reviews from GitHub:', err);
+                    return [];
+                }
+            }
+
+            // ----- POST REVIEW TO GITHUB -----
+            async function postReviewToGitHub(author, text) {
+                try {
+                    const title = `Review from ${author}`;
+                    const body = `Author: ${author}\nReview: ${text}`;
+                    const url = `https://api.github.com/repos/${GITHUB_REPO}/issues`;
+                    const headers = {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    };
+                    const payload = { title, body, labels: [LABEL] };
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) {
+                        throw new Error(`GitHub API error: ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (err) {
+                    console.warn('Failed to post review to GitHub:', err);
+                    throw err;
+                }
+            }
+
+            // ----- RENDER REVIEWS (from cache) -----
+            function renderReviews() {
+                reviewsContainer.innerHTML = '';
+                if (!reviews || reviews.length === 0) {
+                    reviewsContainer.innerHTML = `<div class="review-empty">✨ No reviews yet — be the first!</div>`;
+                    return;
+                }
+                // show latest first (by date descending)
+                const sorted = [...reviews].reverse();
+                sorted.forEach(r => {
+                    const card = document.createElement('div');
+                    card.className = 'review-card';
+                    const dateStr = r.date || '';
+                    card.innerHTML = `
+                        <div class="review-text">“${esc(r.text)}”</div>
+                        <div class="review-author">— ${esc(r.author)} <span class="review-date">${esc(dateStr)}</span></div>
+                    `;
+                    reviewsContainer.appendChild(card);
+                });
+            }
+
+            // ----- LOAD REVIEWS (from GitHub) -----
+            async function loadReviews() {
+                reviewsContainer.innerHTML = `<div class="review-empty">⏳ Loading reviews...</div>`;
+                try {
+                    const fetched = await fetchReviewsFromGitHub();
+                    reviews = fetched;
+                    renderReviews();
+                } catch (e) {
+                    reviewsContainer.innerHTML = `<div class="review-empty">⚠️ Could not load reviews. Please try again later.</div>`;
+                }
+            }
+
+            // ----- ADD REVIEW (post to GitHub, then reload) -----
+            async function addReview() {
+                const name = reviewNameInput.value.trim();
+                const text = reviewTextInput.value.trim();
+                if (!name || !text) { alert('Please enter your name and review!'); return; }
+                if (name.length > 40 || text.length > 200) { alert('Name max 40 chars, review max 200 chars.'); return; }
+
+                // Disable button during submit
+                reviewSubmitBtn.disabled = true;
+                reviewSubmitBtn.textContent = 'SUBMITTING...';
+
+                try {
+                    await postReviewToGitHub(name, text);
+                    // Clear form
+                    reviewNameInput.value = '';
+                    reviewTextInput.value = '';
+                    // Reload reviews from GitHub
+                    await loadReviews();
+                } catch (err) {
+                    alert('Failed to submit review. Please check your GitHub token and repo settings.');
+                } finally {
+                    reviewSubmitBtn.disabled = false;
+                    reviewSubmitBtn.textContent = 'ADD REVIEW';
+                }
+            }
+
+            // ----- ADMIN PANEL (unchanged) -----
+            function renderAdminPanel() {
+                if (!isAdmin) {
+                    adminPanel.innerHTML = `
+                        <div style="text-align:center;padding:16px;"><h3>🔒 SECRET ORIGIN</h3>
+                        <input type="password" id="adminPW" placeholder="PASSWORD" style="text-align:center;font-size:0.9rem;letter-spacing:0.2em;">
+                        <div class="admin-btn-row" style="justify-content:center;"><button class="admin-btn primary" id="adminLoginBtn">UNLOCK</button><button class="admin-btn" id="adminCloseBtn">CLOSE</button></div></div>`;
+                    document.getElementById('adminLoginBtn').addEventListener('click', ()=>{
+                        if (document.getElementById('adminPW').value === ADMIN_PASSWORD) { isAdmin = true; renderAdminPanel(); }
+                        else alert('WRONG!');
+                    });
+                    document.getElementById('adminCloseBtn').addEventListener('click', closeAdmin);
+                    return;
+                }
+                const list = videos.map((v,i) =>
+                    `<div class="admin-video-item"><span>${esc(v.title||'')} — ${esc(v.category||'')}</span><button class="admin-btn" data-rm="${i}" style="padding:2px 5px;">✕</button></div>`
+                ).join('') || '<div style="color:#ccc;font-size:0.55rem;">NO VIDEOS</div>';
+                adminPanel.innerHTML = `
+                    <h3>🛠 ADMIN PANEL</h3>
+                    <label>PROFILE PHOTO</label><input type="file" id="adminProfileUpload" accept="image/*">
+                    <label>RESUME LINK</label><input type="url" id="adminResume" value="${esc(resumeLink)}">
+                    <label>ADD VIDEO</label>
+                    <input type="url" id="adminURL" placeholder="VIDEO URL (YouTube/Vimeo/Drive)"><input type="text" id="adminTitle" placeholder="TITLE"><input type="text" id="adminCat" placeholder="CATEGORY"><input type="url" id="adminThumb" placeholder="THUMBNAIL PATH (optional)">
+                    <button class="admin-btn primary" id="adminAddBtn">+ ADD</button>
+                    <label>VIDEOS (${videos.length})</label><div class="admin-video-list">${list}</div>
+                    <div class="admin-btn-row"><button class="admin-btn" id="adminCloseBtn">CLOSE</button><button class="admin-btn" id="adminClearBtn" style="color:#e00;">CLEAR ALL</button><button class="admin-btn" id="adminLogoutBtn">LOGOUT</button></div>`;
+                document.getElementById('adminProfileUpload').addEventListener('change', e=>{
+                    const f = e.target.files[0];
+                    if (f && f.type.startsWith('image/')) {
+                        const r = new FileReader();
+                        r.onload = ev => { profilePhotoData = ev.target.result; profileImg.src = profilePhotoData; profileImg.style.display = 'block'; saveState(); };
+                        r.readAsDataURL(f);
+                    }
+                });
+                document.getElementById('adminResume').addEventListener('input', e=>{
+                    resumeLink = e.target.value.trim();
+                    resumeBtn.href = resumeLink || '#';
+                    resumeBtn.classList.toggle('empty', !resumeLink);
+                    saveState();
+                });
+                document.getElementById('adminAddBtn').addEventListener('click', ()=>{
+                    const u = document.getElementById('adminURL').value.trim();
+                    const t = document.getElementById('adminTitle').value.trim();
+                    const c = document.getElementById('adminCat').value.trim();
+                    const th = document.getElementById('adminThumb').value.trim();
+                    if (!u || !t) return alert('URL + TITLE REQUIRED');
+                    videos.push({ url: u, title: t, category: c || 'GENERAL', thumbnail: th });
                     saveState();
                     renderProjects();
-                    renderAdminPanel(); } });
-            adminPanel.querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => { videos.splice(
-                    parseInt(b.dataset.rm), 1);
-                saveState();
-                renderProjects();
-                renderAdminPanel(); }));
-        }
-        function openAdmin() { adminOverlay.classList.add('active');
-            renderAdminPanel(); }
+                    renderAdminPanel();
+                });
+                document.getElementById('adminCloseBtn').addEventListener('click', closeAdmin);
+                document.getElementById('adminLogoutBtn').addEventListener('click', ()=>{ isAdmin = false; renderAdminPanel(); });
+                document.getElementById('adminClearBtn').addEventListener('click', ()=>{
+                    if (confirm('DELETE ALL VIDEOS?')) { videos = []; saveState(); renderProjects(); renderAdminPanel(); }
+                });
+                adminPanel.querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', ()=>{
+                    videos.splice(parseInt(b.dataset.rm), 1);
+                    saveState();
+                    renderProjects();
+                    renderAdminPanel();
+                }));
+            }
 
-        function closeAdmin() { adminOverlay.classList.remove('active'); }
-        document.addEventListener('keydown', e => { if (e.ctrlKey && e.shiftKey && e.key === 'A') { e.preventDefault();
-                openAdmin(); } if (e.key === 'Escape') closeAdmin(); });
-        adminOverlay.addEventListener('click', e => { if (e.target === adminOverlay) closeAdmin(); });
+            function openAdmin() { adminOverlay.classList.add('active'); renderAdminPanel(); }
+            function closeAdmin() { adminOverlay.classList.remove('active'); }
+            document.addEventListener('keydown', e=>{
+                if (e.ctrlKey && e.shiftKey && e.key === 'A') { e.preventDefault(); openAdmin(); }
+                if (e.key === 'Escape') closeAdmin();
+            });
+            adminOverlay.addEventListener('click', e=>{ if (e.target === adminOverlay) closeAdmin(); });
 
-        document.querySelectorAll('.reveal').forEach(el => { new IntersectionObserver(entries => { entries.forEach(
-                en => { if (en.isIntersecting) en.target.classList.add('visible'); }); }, { threshold: 0.05 })
-            .observe(el); });
+            // ----- REVEAL ANIMATION -----
+            document.querySelectorAll('.reveal').forEach(el => {
+                new IntersectionObserver(entries => {
+                    entries.forEach(en => { if (en.isIntersecting) en.target.classList.add('visible'); });
+                }, { threshold:0.05 }).observe(el);
+            });
 
-        loadState();
-        applyState();
-        setTimeout(() => { const intro = document.querySelector('.intro-cutscene'); if (intro) intro.style.display =
-                'none'; }, 2500);
-        console.log('%c💥 COMIC v9 %c@120FPS %c🎵', 'color:#e63946;font-size:1.1em;', '', 'color:#ffd60a;');
+            // ==================== INIT ====================
+            loadState();
+            applyState();
+
+            // Load reviews from GitHub
+            loadReviews();
+
+            // Submit review
+            reviewSubmitBtn.addEventListener('click', addReview);
+            reviewNameInput.addEventListener('keydown', e=>{ if (e.key === 'Enter') { e.preventDefault(); reviewTextInput.focus(); } });
+            reviewTextInput.addEventListener('keydown', e=>{ if (e.key === 'Enter') { e.preventDefault(); addReview(); } });
+
+            // Hide intro
+            setTimeout(()=>{ const intro = document.querySelector('.intro-cutscene'); if (intro) intro.style.display = 'none'; }, 2500);
+            console.log('%c💥 COMIC v10 %cwith GitHub Reviews %c🎵', 'color:#e63946;font-size:1.1em;', 'color:#1d3557;', 'color:#ffd60a;');
+            console.log('📝 Reviews are stored as GitHub Issues. Set GITHUB_REPO and GITHUB_TOKEN.');
+        })();
     </script>
 </body>
 </html>
