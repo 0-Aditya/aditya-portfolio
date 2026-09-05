@@ -393,6 +393,7 @@
         }
         .toast.success { background: #4CAF50; color: white; border-color: #2e7d32; }
         .toast.error { background: var(--red); color: white; border-color: #b71c1c; }
+        .toast.info { background: var(--blue); color: white; border-color: #0d1b2a; }
         @keyframes slideUp {
             from { opacity: 0; transform: translateX(-50%) translateY(20px); }
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -542,7 +543,7 @@
             </div>
         </div>
 
-        <!-- ====== REVIEWS PANEL - GOOGLE FORM BUTTON ====== -->
+        <!-- ====== REVIEWS PANEL - AUTO-DISPLAY FROM GOOGLE SHEETS ====== -->
         <div class="comic-panel panel-reviews reveal">
             <div class="action-word" style="top:8px;right:16px;">⭐</div>
             <span class="panel-label">REVIEWS</span>
@@ -550,17 +551,17 @@
                 Share your experience working with Aditya!
             </div>
 
-            <!-- Display existing reviews -->
+            <!-- Reviews will be displayed here (auto-loaded from Google Sheets) -->
             <div class="reviews-display" id="reviewsDisplay">
                 <div style="font-family: var(--font-comic); font-size: 0.7rem; color: var(--red); margin-bottom: 8px;">
                     📝 LATEST REVIEWS
                 </div>
                 <div id="reviewsList">
-                    <div class="no-reviews">✨ No reviews yet — be the first!</div>
+                    <div class="no-reviews">⏳ Loading reviews...</div>
                 </div>
             </div>
 
-            <!-- Submit Review Button - Opens Google Form in new tab -->
+            <!-- Submit Review Button -->
             <div style="text-align: center; margin-top: 16px; padding-top: 16px; border-top: 2px dashed rgba(0,0,0,0.1);">
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdg29K2c3mpZ0DWQkL4kPtvdeLuGaRpyh_zStvbLqCSrnbXGQ/viewform?usp=sharing" 
                    target="_blank" 
@@ -571,7 +572,7 @@
             </div>
 
             <div style="font-size:0.4rem; font-family:var(--font-mono); color:#aaa; margin-top:8px; text-align:right;">
-                💬 Powered by Google Forms
+                💬 Reviews auto-sync from Google Forms
             </div>
         </div>
 
@@ -584,7 +585,9 @@
             "use strict";
 
             // ----- CONFIGURATION -----
-            // Your working Google Form link
+            // 🔥 IMPORTANT: Replace with YOUR Google Sheets ID after setting up
+            // See instructions below on how to get this ID
+            const GOOGLE_SHEETS_ID = '1dVxgWxzWVNcWlhctkgI31ogBf4GUJzJXWaer5iUbzWQ'; // <-- Paste your Sheet ID here!
             const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdg29K2c3mpZ0DWQkL4kPtvdeLuGaRpyh_zStvbLqCSrnbXGQ/viewform?usp=sharing';
             const ADMIN_PASSWORD = 'aditya2026';
             const STORAGE_KEY = 'aditya_comic_v10';
@@ -597,6 +600,7 @@
             let musicPlaying = false;
             let audioUnlocked = false;
             let reviews = [];
+            let isLoading = false;
 
             // ----- DOM REFS -----
             const adminOverlay = document.getElementById('adminOverlay');
@@ -635,14 +639,120 @@
                 { url: 'https://drive.google.com/file/d/1yH7Jv0g3NKOokhmPybTF0bdA1kd_6JO4/view?usp=drive_link', title: 'Talking head edit', category: 'Talking head', thumbnail: 'thumbnails/tariffs-thumbnail.png' }
             ];
 
-            // ----- SAMPLE REVIEWS (for display) -----
+            // ----- SAMPLE REVIEWS (fallback if Sheets fails) -----
             const SAMPLE_REVIEWS = [
                 { name: 'Rahul K.', text: 'Amazing editor! Really brought my gaming montage to life.', date: '2026-09-01' },
                 { name: 'Priya M.', text: 'Professional, fast, and creative. Highly recommend!', date: '2026-08-28' },
                 { name: 'Amit S.', text: 'Best video editor I\'ve worked with. The attention to detail is incredible.', date: '2026-08-25' }
             ];
 
-            // ----- LOAD REVIEWS (from localStorage) -----
+            // ----- LOAD REVIEWS FROM GOOGLE SHEETS -----
+            async function loadReviewsFromSheets() {
+                if (isLoading) return;
+                isLoading = true;
+
+                // If no Sheets ID is set, use sample reviews
+                if (!GOOGLE_SHEETS_ID) {
+                    console.warn('⚠️ No Google Sheets ID configured. Using sample reviews.');
+                    reviews = [...SAMPLE_REVIEWS];
+                    saveReviews();
+                    renderReviews();
+                    isLoading = false;
+                    return;
+                }
+
+                reviewsList.innerHTML = `<div class="no-reviews">⏳ Loading reviews...</div>`;
+
+                try {
+                    // Fetch data from Google Sheets as CSV
+                    const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEETS_ID}/gviz/tq?tqx=out:csv`;
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch from Google Sheets');
+                    }
+
+                    const csvText = await response.text();
+                    
+                    // Parse CSV
+                    const lines = csvText.split('\n');
+                    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+                    
+                    // Find name and review columns
+                    const nameIndex = headers.findIndex(h => h.toLowerCase().includes('name'));
+                    const reviewIndex = headers.findIndex(h => h.toLowerCase().includes('review') || h.toLowerCase().includes('feedback'));
+                    
+                    if (nameIndex === -1 || reviewIndex === -1) {
+                        console.warn('⚠️ Could not find Name or Review columns in the sheet.');
+                        reviews = [...SAMPLE_REVIEWS];
+                        renderReviews();
+                        isLoading = false;
+                        return;
+                    }
+
+                    const parsedReviews = [];
+                    for (let i = 1; i < lines.length; i++) {
+                        if (!lines[i].trim()) continue;
+                        
+                        // Simple CSV parsing (handles quoted fields)
+                        const row = parseCSVLine(lines[i]);
+                        if (row.length <= Math.max(nameIndex, reviewIndex)) continue;
+                        
+                        const name = row[nameIndex]?.trim() || 'Anonymous';
+                        const text = row[reviewIndex]?.trim() || '';
+                        if (!text) continue;
+                        
+                        parsedReviews.push({
+                            name: name,
+                            text: text,
+                            date: new Date().toISOString().split('T')[0]
+                        });
+                    }
+
+                    if (parsedReviews.length > 0) {
+                        reviews = parsedReviews;
+                    } else {
+                        reviews = [...SAMPLE_REVIEWS];
+                    }
+                    
+                    saveReviews();
+                    renderReviews();
+                    
+                } catch (error) {
+                    console.warn('Failed to load reviews from Google Sheets:', error);
+                    // Fallback to sample reviews
+                    if (reviews.length === 0) {
+                        reviews = [...SAMPLE_REVIEWS];
+                        renderReviews();
+                    }
+                } finally {
+                    isLoading = false;
+                }
+            }
+
+            // Simple CSV line parser (handles quoted fields)
+            function parseCSVLine(line) {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(current);
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                result.push(current);
+                return result;
+            }
+
+            // ----- LOCAL REVIEWS (fallback) -----
             function loadReviews() {
                 try {
                     const stored = localStorage.getItem('portfolio_reviews');
@@ -813,13 +923,13 @@
                     <label>VIDEOS (${videos.length})</label><div class="admin-video-list">${list}</div>
                     <div style="margin-top:10px; padding-top:10px; border-top:2px dashed #ddd;">
                         <label style="font-size:0.6rem; color:#666;">📝 MANAGE REVIEWS</label>
-                        <p style="font-size:0.5rem; color:#999; margin:4px 0;">Add a new review manually:</p>
+                        <p style="font-size:0.5rem; color:#999; margin:4px 0;">Google Sheets ID: <span style="color:#111; font-weight:700;">${GOOGLE_SHEETS_ID || 'NOT SET'}</span></p>
+                        <p style="font-size:0.5rem; color:#999;">Reviews auto-sync from Google Sheets. Add manually below if needed:</p>
                         <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:4px;">
                             <input type="text" id="adminReviewName" placeholder="Name" style="flex:1; min-width:80px; padding:4px 6px; border:1px solid #ddd; font-size:0.5rem;">
                             <input type="text" id="adminReviewText" placeholder="Review text" style="flex:2; min-width:120px; padding:4px 6px; border:1px solid #ddd; font-size:0.5rem;">
                             <button class="admin-btn" id="adminAddReviewBtn" style="padding:4px 8px;">+ ADD</button>
                         </div>
-                        <p style="font-size:0.45rem; color:#999; margin-top:4px;">💡 Users submit via Google Form. Add reviews here to display.</p>
                     </div>
                     <div class="admin-btn-row"><button class="admin-btn" id="adminCloseBtn">CLOSE</button><button class="admin-btn" id="adminClearBtn" style="color:#e00;">CLEAR ALL</button><button class="admin-btn" id="adminLogoutBtn">LOGOUT</button></div>`;
                 document.getElementById('adminProfileUpload').addEventListener('change', e=>{
@@ -889,17 +999,34 @@
                 }, { threshold:0.05 }).observe(el);
             });
 
+            // ----- AUTO-REFRESH REVIEWS -----
+            function autoRefreshReviews() {
+                loadReviewsFromSheets();
+            }
+
             // ==================== INIT ====================
             loadState();
             applyState();
-            loadReviews();
+            
+            // Load reviews (from Google Sheets if configured, otherwise sample)
+            if (GOOGLE_SHEETS_ID) {
+                loadReviewsFromSheets();
+            } else {
+                loadReviews();
+                // Show a note in console
+                console.log('💡 To auto-sync reviews from Google Sheets, set GOOGLE_SHEETS_ID in the code.');
+                console.log('📝 For now, sample reviews are displayed.');
+            }
+
+            // Auto-refresh every 5 minutes
+            setInterval(autoRefreshReviews, 5 * 60 * 1000);
 
             // Hide intro
             setTimeout(()=>{ const intro = document.querySelector('.intro-cutscene'); if (intro) intro.style.display = 'none'; }, 2500);
-            console.log('%c💥 COMIC v10 %cwith Google Forms Reviews %c📝', 'color:#e63946;font-size:1.1em;', 'color:#1d3557;', 'color:#ffd60a;');
-            console.log('📝 Reviews powered by Google Forms');
+            console.log('%c💥 COMIC v10 %cwith Google Sheets Auto-Sync %c📝', 'color:#e63946;font-size:1.1em;', 'color:#1d3557;', 'color:#ffd60a;');
+            console.log('📝 Reviews auto-sync from Google Sheets every 5 minutes');
             console.log('🔗 Form URL: ' + GOOGLE_FORM_URL);
-            console.log('💡 No logins, no redirects, completely seamless!');
+            console.log('💡 Visitors see reviews instantly after submission (up to 5 min delay)');
         })();
     </script>
 </body>
