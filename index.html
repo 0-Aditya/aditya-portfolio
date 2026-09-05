@@ -306,60 +306,11 @@
         .admin-video-list { max-height:130px; overflow-y:auto; margin-top:3px; }
         .admin-video-item { display:flex; justify-content:space-between; align-items:center; padding:3px 6px; border:1px solid #eee; margin:2px 0; font-size:0.55rem; background:#fafafa; }
 
-        /* Google Form styling - matches comic theme */
-        .google-form-container {
-            width: 100%;
-            max-width: 100%;
-            margin: 0 auto;
-            border: var(--border-thin);
-            border-radius: 4px;
-            overflow: hidden;
-            background: #fff;
-            box-shadow: 2px 2px 0 var(--ink);
-            min-height: 400px;
-            position: relative;
-        }
-        .google-form-container iframe {
-            width: 100%;
-            min-height: 400px;
-            border: none;
-            display: block;
-            background: #fff;
-        }
-        .form-loading {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-            font-family: var(--font-comic);
-            font-size: 0.9rem;
-            color: #999;
-            z-index: 1;
-            pointer-events: none;
-        }
-        .form-loading .spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid #eee;
-            border-top: 3px solid var(--red);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 12px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Reviews display - shows existing reviews */
+        /* Reviews Display */
         .reviews-display {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 2px dashed rgba(0,0,0,0.1);
+            margin-top: 6px;
         }
-        .reviews-display .review-item {
+        .review-item {
             background: #fff;
             border: var(--border-thin);
             padding: 10px 12px;
@@ -368,17 +319,17 @@
             box-shadow: 2px 2px 0 var(--ink);
             transition: all 0.2s;
         }
-        .reviews-display .review-item:hover {
+        .review-item:hover {
             box-shadow: 4px 4px 0 var(--red);
         }
-        .reviews-display .review-text {
+        .review-item .review-text {
             font-family: var(--font-body);
             font-size: 0.85rem;
             line-height: 1.4;
             color: var(--ink);
             margin-bottom: 4px;
         }
-        .reviews-display .review-meta {
+        .review-item .review-meta {
             font-family: var(--font-mono);
             font-size: 0.5rem;
             font-weight: 700;
@@ -386,7 +337,7 @@
             letter-spacing: 0.04em;
             color: var(--red);
         }
-        .reviews-display .review-meta .date {
+        .review-item .review-meta .date {
             color: #999;
             font-weight: 400;
             margin-left: 6px;
@@ -403,6 +354,51 @@
             text-transform: uppercase;
         }
 
+        .review-submit-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--yellow);
+            border: var(--border-thick);
+            font-family: var(--font-comic);
+            font-size: 0.9rem;
+            color: var(--ink);
+            text-decoration: none;
+            box-shadow: 4px 4px 0 var(--ink);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .review-submit-btn:hover {
+            background: var(--red);
+            color: #fff;
+            box-shadow: 6px 6px 0 var(--ink);
+            transform: translateY(-2px);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border: var(--border-thick);
+            background: var(--yellow);
+            font-family: var(--font-comic);
+            font-size: 0.8rem;
+            box-shadow: 4px 4px 0 var(--ink);
+            z-index: 99999;
+            display: none;
+            animation: slideUp 0.3s ease-out;
+            max-width: 90%;
+            text-align: center;
+        }
+        .toast.success { background: #4CAF50; color: white; border-color: #2e7d32; }
+        .toast.error { background: var(--red); color: white; border-color: #b71c1c; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
         @media (max-width: 768px) {
             .comic-page { grid-template-columns:1fr 1fr; gap:8px; padding:10px 8px; }
             .panel-hero, .panel-projects, .panel-stats, .panel-experience, .panel-resume, .panel-contact, .panel-reviews { grid-column:span 2; }
@@ -416,6 +412,7 @@
             body { cursor:auto; }
             .music-toggle { bottom:10px; left:10px; padding:6px 9px; font-size:0.6rem; }
             .comic-panel { box-shadow:3px 3px 0 var(--ink); }
+            .toast { bottom: 70px; font-size: 0.7rem; padding: 10px 16px; }
         }
     </style>
 </head>
@@ -456,6 +453,8 @@
     </div>
 
     <div class="admin-overlay" id="adminOverlay"><div class="admin-panel" id="adminPanel"></div></div>
+
+    <div id="toast" class="toast"></div>
 
     <div class="comic-page">
 
@@ -544,28 +543,12 @@
             </div>
         </div>
 
-        <!-- ====== REVIEWS PANEL - GOOGLE FORM ====== -->
+        <!-- ====== REVIEWS PANEL - GOOGLE FORM BUTTON ====== -->
         <div class="comic-panel panel-reviews reveal">
             <div class="action-word" style="top:8px;right:16px;">⭐</div>
             <span class="panel-label">REVIEWS</span>
             <div style="margin-bottom: 10px; font-family: var(--font-body); font-size: 0.8rem; color: #666;">
                 Share your experience working with Aditya!
-            </div>
-
-            <!-- Google Form Embed -->
-            <div class="google-form-container">
-                <div class="form-loading">
-                    <div class="spinner"></div>
-                    Loading review form...
-                </div>
-                <iframe
-                    id="googleForm"
-                    src="https://docs.google.com/forms/d/e/1FAIpQLSfW7qjL5YzYW8gZqPqE7tHtJqWrNkMvX7lLqWrNkMvX7lLqW/viewform?embedded=true"
-                    frameborder="0"
-                    marginheight="0"
-                    marginwidth="0"
-                    onload="document.querySelector('.form-loading').style.display='none'"
-                >Loading…</iframe>
             </div>
 
             <!-- Display existing reviews -->
@@ -578,8 +561,18 @@
                 </div>
             </div>
 
+            <!-- Submit Review Button - Opens Google Form in new tab -->
+            <div style="text-align: center; margin-top: 16px; padding-top: 16px; border-top: 2px dashed rgba(0,0,0,0.1);">
+                <a href="https://docs.google.com/forms/d/e/1DXDczWOgHcB9ugreA9ctcwnvhle21mQUeR8yTVcVgQY/viewform" 
+                   target="_blank" 
+                   class="review-submit-btn">
+                    ⭐ Submit Your Review
+                </a>
+                <p style="margin-top: 8px; font-size: 0.5rem; color: #999;">Opens in new tab · No login required</p>
+            </div>
+
             <div style="font-size:0.4rem; font-family:var(--font-mono); color:#aaa; margin-top:8px; text-align:right;">
-                💬 Powered by Google Forms · Your feedback matters!
+                💬 Powered by Google Forms
             </div>
         </div>
 
@@ -592,10 +585,7 @@
             "use strict";
 
             // ----- CONFIGURATION -----
-            // 🔥 IMPORTANT: Replace this with YOUR Google Form ID
-            // Your form ID is the part after /d/e/ in the URL:
-            // https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform
-            const GOOGLE_FORM_ID = '1FAIpQLSdg29K2c3mpZ0DWQkL4kPtvdeLuGaRpyh_zStvbLqCSrnbXGQ';
+            const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1DXDczWOgHcB9ugreA9ctcwnvhle21mQUeR8yTVcVgQY/viewform';
             const ADMIN_PASSWORD = 'aditya2026';
             const STORAGE_KEY = 'aditya_comic_v10';
 
@@ -621,6 +611,18 @@
             const musicToggle = document.getElementById('musicToggle');
             const musicLabel = document.getElementById('musicLabel');
             const reviewsList = document.getElementById('reviewsList');
+            const toast = document.getElementById('toast');
+
+            // ----- TOAST -----
+            function showToast(message, type = 'success') {
+                toast.textContent = message;
+                toast.className = `toast ${type}`;
+                toast.style.display = 'block';
+                clearTimeout(toast._hideTimeout);
+                toast._hideTimeout = setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 4000);
+            }
 
             // ----- DEFAULT VIDEOS -----
             const DEFAULT_VIDEOS = [
@@ -634,16 +636,13 @@
             ];
 
             // ----- SAMPLE REVIEWS (for display) -----
-            // These are stored locally. When users submit via Google Form,
-            // you'll need to manually add them here or use a service like
-            // Google Sheets API to fetch them automatically.
             const SAMPLE_REVIEWS = [
                 { name: 'Rahul K.', text: 'Amazing editor! Really brought my gaming montage to life.', date: '2026-09-01' },
                 { name: 'Priya M.', text: 'Professional, fast, and creative. Highly recommend!', date: '2026-08-28' },
                 { name: 'Amit S.', text: 'Best video editor I\'ve worked with. The attention to detail is incredible.', date: '2026-08-25' }
             ];
 
-            // ----- LOAD REVIEWS (from localStorage or samples) -----
+            // ----- LOAD REVIEWS (from localStorage) -----
             function loadReviews() {
                 try {
                     const stored = localStorage.getItem('portfolio_reviews');
@@ -669,7 +668,6 @@
                     reviewsList.innerHTML = `<div class="no-reviews">✨ No reviews yet — be the first!</div>`;
                     return;
                 }
-                // Show latest first
                 const sorted = [...reviews].reverse();
                 reviewsList.innerHTML = sorted.map(r => `
                     <div class="review-item">
@@ -797,7 +795,7 @@
                         <div class="admin-btn-row" style="justify-content:center;"><button class="admin-btn primary" id="adminLoginBtn">UNLOCK</button><button class="admin-btn" id="adminCloseBtn">CLOSE</button></div></div>`;
                     document.getElementById('adminLoginBtn').addEventListener('click', ()=>{
                         if (document.getElementById('adminPW').value === ADMIN_PASSWORD) { isAdmin = true; renderAdminPanel(); }
-                        else alert('WRONG!');
+                        else { showToast('WRONG PASSWORD!', 'error'); }
                     });
                     document.getElementById('adminCloseBtn').addEventListener('click', closeAdmin);
                     return;
@@ -821,14 +819,14 @@
                             <input type="text" id="adminReviewText" placeholder="Review text" style="flex:2; min-width:120px; padding:4px 6px; border:1px solid #ddd; font-size:0.5rem;">
                             <button class="admin-btn" id="adminAddReviewBtn" style="padding:4px 8px;">+ ADD</button>
                         </div>
-                        <p style="font-size:0.45rem; color:#999; margin-top:4px;">💡 Users can submit reviews via the Google Form above. Add them here to display.</p>
+                        <p style="font-size:0.45rem; color:#999; margin-top:4px;">💡 Users submit via Google Form. Add reviews here to display.</p>
                     </div>
                     <div class="admin-btn-row"><button class="admin-btn" id="adminCloseBtn">CLOSE</button><button class="admin-btn" id="adminClearBtn" style="color:#e00;">CLEAR ALL</button><button class="admin-btn" id="adminLogoutBtn">LOGOUT</button></div>`;
                 document.getElementById('adminProfileUpload').addEventListener('change', e=>{
                     const f = e.target.files[0];
                     if (f && f.type.startsWith('image/')) {
                         const r = new FileReader();
-                        r.onload = ev => { profilePhotoData = ev.target.result; profileImg.src = profilePhotoData; profileImg.style.display = 'block'; saveState(); };
+                        r.onload = ev => { profilePhotoData = ev.target.result; profileImg.src = profilePhotoData; profileImg.style.display = 'block'; saveState(); showToast('Profile photo updated!', 'success'); };
                         r.readAsDataURL(f);
                     }
                 });
@@ -843,33 +841,36 @@
                     const t = document.getElementById('adminTitle').value.trim();
                     const c = document.getElementById('adminCat').value.trim();
                     const th = document.getElementById('adminThumb').value.trim();
-                    if (!u || !t) return alert('URL + TITLE REQUIRED');
+                    if (!u || !t) { showToast('URL + TITLE REQUIRED', 'error'); return; }
                     videos.push({ url: u, title: t, category: c || 'GENERAL', thumbnail: th });
                     saveState();
                     renderProjects();
                     renderAdminPanel();
+                    showToast('Video added!', 'success');
                 });
                 document.getElementById('adminAddReviewBtn').addEventListener('click', ()=>{
                     const name = document.getElementById('adminReviewName').value.trim();
                     const text = document.getElementById('adminReviewText').value.trim();
-                    if (!name || !text) { alert('Name and review text required!'); return; }
+                    if (!name || !text) { showToast('Name and review text required!', 'error'); return; }
                     reviews.push({ name, text, date: new Date().toISOString().split('T')[0] });
                     saveReviews();
                     renderReviews();
                     document.getElementById('adminReviewName').value = '';
                     document.getElementById('adminReviewText').value = '';
                     renderAdminPanel();
+                    showToast('Review added!', 'success');
                 });
                 document.getElementById('adminCloseBtn').addEventListener('click', closeAdmin);
                 document.getElementById('adminLogoutBtn').addEventListener('click', ()=>{ isAdmin = false; renderAdminPanel(); });
                 document.getElementById('adminClearBtn').addEventListener('click', ()=>{
-                    if (confirm('DELETE ALL VIDEOS?')) { videos = []; saveState(); renderProjects(); renderAdminPanel(); }
+                    if (confirm('DELETE ALL VIDEOS?')) { videos = []; saveState(); renderProjects(); renderAdminPanel(); showToast('All videos deleted.', 'success'); }
                 });
                 adminPanel.querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', ()=>{
                     videos.splice(parseInt(b.dataset.rm), 1);
                     saveState();
                     renderProjects();
                     renderAdminPanel();
+                    showToast('Video removed.', 'success');
                 }));
             }
 
@@ -897,6 +898,7 @@
             setTimeout(()=>{ const intro = document.querySelector('.intro-cutscene'); if (intro) intro.style.display = 'none'; }, 2500);
             console.log('%c💥 COMIC v10 %cwith Google Forms Reviews %c📝', 'color:#e63946;font-size:1.1em;', 'color:#1d3557;', 'color:#ffd60a;');
             console.log('📝 Reviews powered by Google Forms');
+            console.log('🔗 Form URL: ' + GOOGLE_FORM_URL);
             console.log('💡 No logins, no redirects, completely seamless!');
         })();
     </script>
